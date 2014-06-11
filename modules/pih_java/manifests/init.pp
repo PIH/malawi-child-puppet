@@ -1,18 +1,20 @@
 class pih_java {
-
-	file { 'c:\dev\openmrs\test\test.zip':
+    
+	$pih_java_home = 'c:\pih\java'
+	
+	file { 'c:\pih\jdk-6u45.zip':
 		ensure  => file,
-		source	=> "puppet:///modules/pih_java/test.zip",				
+		source	=> "puppet:///modules/pih_java/jdk-6u45.zip",				
 	}
 	
-	file { 'c:\dev\openmrs\test\testunzip':
+	file { $pih_java_home:
 		ensure  => directory,
-		require => File['c:\dev\openmrs\test\test.zip'],
+		require => File['c:\pih\jdk-6u45.zip'],
 	}
 
-	windows::unzip { 'C:\dev\openmrs\test\test.zip':
-		destination => 'C:\dev\openmrs\test\testunzip',
-		creates	=> 'C:\dev\openmrs\test\testunzip\islandView_page17.jpg',
-		require => File['c:\dev\openmrs\test\testunzip'],
+	windows::unzip { 'c:\pih\jdk-6u45.zip':
+		destination => $pih_java_home,
+		creates	=> 'c:\pih\java\bin',
+		require => File[$pih_java_home],
 	}
 }
