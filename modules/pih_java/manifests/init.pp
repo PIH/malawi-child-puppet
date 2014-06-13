@@ -23,4 +23,9 @@ class pih_java {
 		creates	=> "${pih_java_home}\\bin",
 		require => File[$pih_java_home],
 	}
+	
+	windows::environment { 'JAVA_HOME': 
+		value	=>	$pih_java_home,
+		require => File[$pih_java_home],
+	}
 }

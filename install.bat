@@ -1,0 +1,1 @@
+puppet apply --verbose --logdest=console --modulepath=./modules manifests\site.pp
