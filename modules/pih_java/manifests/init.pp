@@ -1,7 +1,5 @@
 class pih_java {
     
-	$pih_home = 'c:\pih'
-	$pih_java_home = "${pih_home}\\java"
 	$pih_java_zip = "${pih_home}\\jdk-6u45.zip"
 	
 	file { $pih_home:
