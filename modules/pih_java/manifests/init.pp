@@ -20,10 +20,22 @@ class pih_java {
 		destination => $pih_java_home,
 		creates	=> "${pih_java_home}\\bin",
 		require => File[$pih_java_home],
-	}
+	} ->
 	
 	windows::environment { 'JAVA_HOME': 
 		value	=>	$pih_java_home,
-		require => File[$pih_java_home],
+		notify	=> Class['windows::refresh_environment'],
+	} ->
+
+	exec { 'set_java_home': 
+		path		=> $::path,
+		command		=> "cmd.exe /c set JAVA_HOME=${pih_java_home}",
+		logoutput	=> true,
+	} ->	
+	
+	exec { 'show_java_home': 
+		path		=> $::path,
+		command		=> 'cmd.exe /c echo %JAVA_HOME%',
+		logoutput	=> true,
 	}
 }
