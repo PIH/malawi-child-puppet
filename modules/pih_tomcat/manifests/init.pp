@@ -26,24 +26,28 @@ class pih_tomcat {
 		notify	=> Class['windows::refresh_environment'],
 	}  -> 
 	
-	file { $pih_install_tomcat: 
-		ensure  => present,
-		content	=> template('pih_tomcat/install_tomcat.erb'),	
-		notify	=> Exec['install_tomcat'],
-	} 
+	exec { 'remove_tomcat': 
+		path		=> $::path,
+		cwd			=> "${pih_tomcat_home}\\bin", 
+		provider	=> windows, 
+		command		=> "cmd.exe /c set JAVA_HOME=${pih_java_home}&&service.bat remove",
+		logoutput	=> true,
+	} -> 
 	
 	exec { 'install_tomcat': 
 		path		=> $::path,
 		cwd			=> "${pih_tomcat_home}\\bin", 
-		command		=> 'cmd.exe /c install_tomcat.bat',
+		provider	=> windows, 
+		command		=> "cmd.exe /c set JAVA_HOME=${pih_java_home}&&service.bat install",
 		logoutput	=> true,
 	} -> 
 	
 	exec { 'start_tomcat': 
 		path		=> $::path,
-		command		=> 'cmd.exe /c sc start Tomcat6',
+		cwd			=> "${pih_tomcat_home}\\bin", 
+		provider	=> windows, 
+		command		=> "cmd.exe /c set JAVA_HOME=${pih_java_home}&&sc start Tomcat6",
 		logoutput	=> true,
 	}
-	
 	
 }
