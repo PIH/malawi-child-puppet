@@ -1,5 +1,7 @@
 class pih_mysql {
     
+	require pih_java
+	
 	$pih_mysql_zip = "${pih_home}\\mysql-5.6.16-win32-min.zip"
 	$pih_mysql_home = "${pih_home}\\mysql\\"
 	$pih_mysql_ini = "${pih_home}\\mysql\\my.ini"
@@ -28,11 +30,22 @@ class pih_mysql {
 		content	=> template('pih_mysql/my.ini.erb'),	
 	} ->
 	
+	exec { 'stop_mysql': 
+		path		=> $::path,
+		cwd			=> "${pih_mysql_home}\\bin", 
+		provider	=> windows, 
+		command		=> "cmd.exe /c net stop mysql",
+		onlyif		=> "cmd.exe /c sc query mysql",
+		unless		=> "cmd.exe /c sc query mysql | find \"STOPPED\"",
+		logoutput	=> true,
+	} -> 
+	
 	exec { 'remove_mysql': 
 		path		=> $::path,
 		cwd			=> "${pih_mysql_home}\\bin", 
 		provider	=> windows, 
 		command		=> "cmd.exe /c mysqld --remove",
+		onlyif		=> "cmd.exe /c sc query mysql",
 		logoutput	=> true,
 	} -> 
 	
