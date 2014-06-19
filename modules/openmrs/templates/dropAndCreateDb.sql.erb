@@ -1,0 +1,5 @@
+DROP DATABASE IF EXISTS openmrs;
+CREATE DATABASE openmrs DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;
+GRANT ALL ON openmrs.* TO openmrs@localhost IDENTIFIED BY 'openmrs';
+use openmrs;
+SOURCE c:/child/test/openmrs.sql;

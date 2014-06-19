@@ -2,7 +2,7 @@ class pih_tomcat {
     
 	require pih_java
 	
-	$pih_tomcat_zip = "${pih_home}\\tomcat-6.0.32.zip"
+	$pih_tomcat_zip = "${pih_home_bin}\\tomcat-6.0.32.zip"
 	$pih_install_tomcat = "${pih_tomcat_home}\\bin\\install_tomcat.bat"
 	
 	file { $pih_tomcat_home:

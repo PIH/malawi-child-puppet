@@ -2,7 +2,7 @@ class pih_mysql {
     
 	require pih_java
 	
-	$pih_mysql_zip = "${pih_home}\\mysql-5.6.16-win32-min.zip"
+	$pih_mysql_zip = "${pih_home_bin}\\mysql-5.6.16-win32-min.zip"
 	$pih_mysql_home = "${pih_home}\\mysql\\"
 	$pih_mysql_ini = "${pih_home}\\mysql\\my.ini"
 	$pih_mysql_data = "${pih_home}\\mysql\\data\\"

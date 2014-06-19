@@ -1,6 +1,6 @@
 class pih_java {
     
-	$pih_java_zip = "${pih_home}\\jdk-6u45.zip"
+	$pih_java_zip = "${pih_home_bin}\\jdk-6u45.zip"
 	
 	file { $pih_java_home:
 		ensure  => directory,
