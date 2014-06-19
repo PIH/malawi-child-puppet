@@ -1,1 +1,1 @@
-puppet apply --verbose --logdest=console --modulepath=./modules manifests\site.pp
+puppet apply --verbose --logdest=console --hiera_config=./hiera.yaml --modulepath=./modules manifests\site.pp

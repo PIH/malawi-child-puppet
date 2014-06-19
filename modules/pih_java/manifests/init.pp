@@ -2,9 +2,6 @@ class pih_java {
     
 	$pih_java_zip = "${pih_home}\\jdk-6u45.zip"
 	
-	file { $pih_home:
-		ensure  => directory,
-	}
 	file { $pih_java_home:
 		ensure  => directory,
 		require => File[$pih_home],

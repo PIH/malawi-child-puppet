@@ -7,6 +7,7 @@ class openmrs {
 	$pih_openmrs_home = "${pih_home}\\openmrs\\"
 	$pih_openmrs_modules = "${pih_openmrs_home}\\modules\\"
 	
+	$pih_openmrs_db_zip = "${pih_home}\\openmrs.sql.zip"
 	$pih_openmrs_modules_zip = "${pih_home}\\openmrs-modules.zip"
 	$pih_openmrs_war = "${pih_tomcat_home}\\webapps\\openmrs.war"
 	$pih_openmrs_runtime_properties = "${pih_tomcat_home}\\bin\\openmrs-runtime.properties"
@@ -15,6 +16,11 @@ class openmrs {
 		ensure  => directory,
 		require => File[$pih_home],
 	} ->
+	
+	file { $pih_openmrs_db_zip:
+		ensure  => file,
+		source	=> "puppet:///modules/openmrs/openmrs.sql.zip",		
+	} -> 
 	
 	file { $pih_openmrs_modules_zip:
 		ensure  => file,
@@ -39,14 +45,6 @@ class openmrs {
 	
 	pih_tomcat::start_tomcat { 'openmrs_start_tomcat': 
 	
-	} -> 
-	
-	exec { 'start chrome': 
-		path		=> $::path,
-		cwd			=> "${pih_home}", 
-		provider	=> windows, 
-		command		=> "cmd.exe /c \"%ProgramFiles%\\Google\\Chrome\\Application\\chrome.exe\" --kiosk http://localhost:8080/openmrs",
-		logoutput	=> true,
-	}
+	} 
 	
 }
