@@ -1,0 +1,5 @@
+mysql_root_user: root
+mysql_root_password: foo
+openmrs_db: openmrs
+openmrs_db_user: openmrs
+openmrs_db_password: foo
