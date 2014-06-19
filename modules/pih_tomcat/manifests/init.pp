@@ -42,7 +42,6 @@ class pih_tomcat {
 		provider	=> windows, 
 		command		=> "cmd.exe /c set JAVA_HOME=${pih_java_home}&&service.bat install",
 		logoutput	=> true,
-	} ->
+	} 
 	
-	notify { 'pih_tomcat::start_tomcat':}
-}
+} 

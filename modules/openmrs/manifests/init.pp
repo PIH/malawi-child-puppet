@@ -9,7 +9,7 @@ class openmrs {
 	
 	$pih_openmrs_modules_zip = "${pih_home}\\openmrs-modules.zip"
 	$pih_openmrs_war = "${pih_tomcat_home}\\webapps\\openmrs.war"
-	$pih_openmrs_runtime_properties = "${pih_openmrs_home}\\openmrs-runtime.properties"
+	$pih_openmrs_runtime_properties = "${pih_tomcat_home}\\bin\\openmrs-runtime.properties"
 	
 	file { $pih_openmrs_home:
 		ensure  => directory,
@@ -35,8 +35,18 @@ class openmrs {
 		ensure  => present,
 		provider => windows, 	
 		content	=> template('openmrs/openmrs-runtime.properties.erb'),	
-	} ->
+	} -> 
 	
-	notify { 'pih_tomcat::stop_tomcat':}
+	pih_tomcat::start_tomcat { 'openmrs_start_tomcat': 
+	
+	} -> 
+	
+	exec { 'start chrome': 
+		path		=> $::path,
+		cwd			=> "${pih_home}", 
+		provider	=> windows, 
+		command		=> "cmd.exe /c \"%ProgramFiles%\\Google\\Chrome\\Application\\chrome.exe\" --kiosk http://localhost:8080/openmrs",
+		logoutput	=> true,
+	}
 	
 }

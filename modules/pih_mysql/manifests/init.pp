@@ -30,6 +30,8 @@ class pih_mysql {
 		content	=> template('pih_mysql/my.ini.erb'),	
 	} ->
 	
+	windows::path { "${pih_mysql_home}\\bin": } -> 
+	
 	exec { 'stop_mysql': 
 		path		=> $::path,
 		cwd			=> "${pih_mysql_home}\\bin", 
