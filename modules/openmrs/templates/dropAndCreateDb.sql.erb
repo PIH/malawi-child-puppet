@@ -1,5 +1,5 @@
-DROP DATABASE IF EXISTS openmrs;
-CREATE DATABASE openmrs DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;
-GRANT ALL ON openmrs.* TO openmrs@localhost IDENTIFIED BY 'openmrs';
-use openmrs;
-SOURCE c:/child/test/openmrs.sql;
+DROP DATABASE IF EXISTS <%= @openmrs_db %>;
+CREATE DATABASE <%= @openmrs_db %> DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;
+GRANT ALL ON <%= @openmrs_db %>.* TO '<%= @openmrs_db_user %>'@'localhost' IDENTIFIED BY '<%= @openmrs_db_password %>';
+use <%= @openmrs_db %>;
+SOURCE <%= @pih_openmrs_db_file_linux %>;

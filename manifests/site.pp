@@ -6,6 +6,7 @@ $pih_home = hiera('pih_home')
 $pih_home_bin = "${pih_home}\\bin"
 $pih_java_home = "${pih_home}\\java"
 $pih_tomcat_home = "${pih_home}\\tomcat"
+$pih_mysql_home = "${pih_home}\\mysql"
 	
 node default {
 	include pih_folders
