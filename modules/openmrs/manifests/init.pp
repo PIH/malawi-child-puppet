@@ -46,12 +46,21 @@ class openmrs {
 		content	=> template('openmrs/dropAndCreateDb.sql.erb'),	
 	} ->
 	
+	exec { 'recreate_openmrs_db': 
+		path		=> $::path,
+		cwd			=> "${pih_mysql_home}\\bin", 
+		provider	=> windows, 
+		timeout		=> 0, 
+		command		=> "cmd.exe /c mysql.exe -u root -popenmrs < ${openmrs_create_db_sql}",
+		logoutput	=> true,
+	} ->
+	
 	exec { 'source_openmrs_db': 
 		path		=> $::path,
 		cwd			=> "${pih_mysql_home}\\bin", 
 		provider	=> windows, 
 		timeout		=> 0, 
-		command		=> "cmd.exe /c mysql.exe -u root -popenmrs < ${pih_openmrs_db_file}",
+		command		=> "cmd.exe /c mysql.exe -u root -popenmrs openmrs < ${pih_openmrs_db_file}",
 		logoutput	=> true,
 	} ->
 	
