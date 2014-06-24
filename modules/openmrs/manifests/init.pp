@@ -11,7 +11,7 @@ class openmrs {
 	$pih_openmrs_db_bat = "${pih_openmrs_db}dropAndCreateDb.sql"
 	$pih_openmrs_db_file_linux = regsubst($pih_openmrs_db_file, '[\\]', '/', G) 
 	
-	$pih_openmrs_db_zip = "${pih_home_bin}\\openmrs.sql.zip"
+	$pih_openmrs_db_zip = "${pih_home_bin}\\openmrs.zip"
 	$openmrs_create_db_sql = "${pih_openmrs_db}dropAndCreateDb.sql"
 	$openmrs_db = hiera('openmrs_db')
 	$openmrs_db_user = hiera('openmrs_db_user')
@@ -32,7 +32,7 @@ class openmrs {
 	
 	file { $pih_openmrs_db_zip:
 		ensure  => file,
-		source	=> "puppet:///modules/openmrs/openmrs.sql.zip",		
+		source	=> "puppet:///modules/openmrs/openmrs.zip",		
 	} -> 
 	
 	windows::unzip { $pih_openmrs_db_zip:
@@ -51,7 +51,7 @@ class openmrs {
 		cwd			=> "${pih_mysql_home}\\bin", 
 		provider	=> windows, 
 		timeout		=> 0, 
-		command		=> "cmd.exe /c mysql.exe -u root -popenmrs < ${openmrs_create_db_sql}",
+		command		=> "cmd.exe /c mysql.exe -u root -popenmrs < ${pih_openmrs_db_file}",
 		logoutput	=> true,
 	} ->
 	
