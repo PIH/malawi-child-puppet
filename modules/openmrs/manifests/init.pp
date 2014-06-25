@@ -5,6 +5,7 @@ class openmrs {
 	require pih_mysql
 	
 	$pih_openmrs_home = "${pih_home}\\openmrs\\"
+	$pih_openmrs_home_linux = regsubst($pih_openmrs_home, '[\\]', '/', G) 
 	$pih_openmrs_modules = "${pih_openmrs_home}\\modules\\"
 	$pih_openmrs_db = "${pih_openmrs_home}db\\"
 	$pih_openmrs_db_file = "${pih_openmrs_db}openmrs.sql"
@@ -19,7 +20,7 @@ class openmrs {
 	
 	$pih_openmrs_modules_zip = "${pih_home_bin}\\openmrs-modules.zip"
 	$pih_openmrs_war = "${pih_tomcat_home}\\webapps\\openmrs.war"
-	$pih_openmrs_runtime_properties = "${pih_tomcat_home}\\bin\\openmrs-runtime.properties"
+	$pih_openmrs_runtime_properties = "${pih_openmrs_home}openmrs-runtime.properties"
 	
 	file { $pih_openmrs_home:
 		ensure  => directory,
@@ -45,7 +46,7 @@ class openmrs {
 		provider => windows, 	
 		content	=> template('openmrs/dropAndCreateDb.sql.erb'),	
 	} ->
-	
+
 	exec { 'recreate_openmrs_db': 
 		path		=> $::path,
 		cwd			=> "${pih_mysql_home}\\bin", 
@@ -83,6 +84,11 @@ class openmrs {
 		ensure  => present,
 		provider => windows, 	
 		content	=> template('openmrs/openmrs-runtime.properties.erb'),	
+	} -> 
+	
+	windows::environment { 'OPENMRS_RUNTIME_PROPERTIES_FILE': 
+		value	=>	$pih_openmrs_runtime_properties,
+		notify	=> Class['windows::refresh_environment'],
 	} -> 
 	
 	pih_tomcat::start_tomcat { 'openmrs_start_tomcat': 

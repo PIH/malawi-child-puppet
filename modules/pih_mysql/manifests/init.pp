@@ -2,7 +2,13 @@ class pih_mysql {
     
 	require pih_java
 	
-	$pih_mysql_zip = "${pih_home_bin}\\mysql-5.6.16-win32-min.zip"
+	if $architecture == 'x64' { 
+		$mysql_zip = 'mysql-5.6.16-winx64-min.zip'
+	} else {
+		$mysql_zip = 'mysql-5.6.16-win32-min.zip'
+	}
+	
+	$pih_mysql_zip = "${pih_home_bin}\\${mysql_zip}"
 	
 	$pih_mysql_ini = "${pih_home}\\mysql\\my.ini"
 	$pih_mysql_data = "${pih_home}\\mysql\\data\\"
@@ -14,7 +20,7 @@ class pih_mysql {
 	
 	file { $pih_mysql_zip:
 		ensure  => file,
-		source	=> "puppet:///modules/pih_mysql/mysql-5.6.16-win32-min.zip",		
+		source	=> "puppet:///modules/pih_mysql/${mysql_zip}",		
 		require => File[$pih_mysql_home],
 	}
 	

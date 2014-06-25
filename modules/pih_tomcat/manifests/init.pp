@@ -2,7 +2,13 @@ class pih_tomcat {
     
 	require pih_java
 	
-	$pih_tomcat_zip = "${pih_home_bin}\\tomcat-6.0.32.zip"
+	if $architecture == 'x64' { 
+		$tomcat_zip = 'tomcat-6.0.32-x64.zip'
+	} else {
+		$tomcat_zip = 'tomcat-6.0.32.zip'
+	}
+	
+	$pih_tomcat_zip = "${pih_home_bin}\\${tomcat_zip}"
 	$pih_install_tomcat = "${pih_tomcat_home}\\bin\\install_tomcat.bat"
 	
 	file { $pih_tomcat_home:
@@ -12,7 +18,7 @@ class pih_tomcat {
 	
 	file { $pih_tomcat_zip:
 		ensure  => file,
-		source	=> "puppet:///modules/pih_tomcat/tomcat-6.0.32.zip",		
+		source	=> "puppet:///modules/pih_tomcat/${tomcat_zip}",		
 		require => File[$pih_tomcat_home],
 	}
 	
