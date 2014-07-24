@@ -15,7 +15,7 @@ set CONNECT_TO_SERVER=%PLINK_EXE% %SSH_CREDENTIALS%
 rem ====================================================================================
 echo Set Db connection properties
 rem ====================================================================================
-set REMOTE_OPENMRS_DB_USER=<%= @openmrs_db %>
+set REMOTE_OPENMRS_DB_USER=<%= @mysql_root_user %>
 set REMOTE_OPENMRS_DB_PASSWORD=<%= @parent_mysql_db_password %>
 set LOCAL_OPENMRS_DB_USER=<%= @mysql_root_user %>
 set LOCAL_OPENMRS_DB_PASSWORD=<%= @mysql_root_password %>
@@ -28,6 +28,7 @@ set DROP_AND_CREATE_DB_SCRIPT=<%= @openmrs_create_db_sql %>
 set DELETE_SYNC_TABLES_DB_SCRIPT=<%= @delete_sync_tables_sql %>
 set UPDATE_CHILD_SERVER_DB_SCRIPT=<%= @update_child_server_settings_sql %>
 set UPDATE_PARENT_SERVER_DB_SCRIPT=<%= @update_parent_server_settings_sql %>
+set SERVER_UUID_TEXT_FILE=<%= @server_uuid_text_file %>
 
 echo Connect to the parent server
 %CONNECT_TO_SERVER% "ls -al"
@@ -43,7 +44,7 @@ rem delete from sync_server_record; delete from sync_record; delete from sync_im
 rem dump parent DB ===========================================================
 : dump parent DB
 echo Step 2/10: Dump parent db on parent server
-%CONNECT_TO_SERVER% "mysqldump %REMOTE_DB_CREDENTIALS% -q -e --single-transaction --ignore-table=openmrs.global_property --ignore-table=openmrs.scheduler_task_config --ignore-table=openmrs.scheduler_task_config_property --ignore-table=openmrs.sync_class --ignore-table=openmrs.sync_server --ignore-table=openmrs.sync_server_class | gzip > /tmp/parent-dump.sql.gz "
+%CONNECT_TO_SERVER% "mysqldump %REMOTE_DB_CREDENTIALS% -q -e --single-transaction | gzip > /tmp/parent-dump.sql.gz "
 
 rem Copy db from parent server ===========================================================
 echo Step 3/10: Copy db from parent server
@@ -51,7 +52,7 @@ echo Step 3/10: Copy db from parent server
 
 rem unzip parent DB ===========================================================
 echo Step 4/10: Unzip parent DB
-%GZIP_EXE% -d parent-dump.sql.gz
+%GZIP_EXE% -f -d parent-dump.sql.gz
 
 rem drop and recreate local DB ===========================================================
 echo Step 5/10: Drop and re-create local DB
@@ -73,10 +74,13 @@ net start Tomcat6
 rem wait 60 seconds for Tomcat to start
 ping -w 1000 -n 30 127.0.0.1
 
+rem delete temp text file in which we store the child server uuid
+rem del /F /Q %SERVER_UUID_TEXT_FILE%
+
 rem configure sync child server ===========================================================
 echo Step 9/10: Configure sync child server
 mysql %LOCAL_DB_CREDENTIALS% %OPENMRS_DB% < %UPDATE_CHILD_SERVER_DB_SCRIPT%
 
 rem configure sync parent server ===========================================================
 echo Step 10/10: Configure sync parent server
-%CONNECT_TO_SERVER% "%REMOTE_DB_CONNECTION%" < %UPDATE_PARENT_SERVER_DB_SCRIPT%
+rem %CONNECT_TO_SERVER% "%REMOTE_DB_CONNECTION%" < %UPDATE_PARENT_SERVER_DB_SCRIPT%

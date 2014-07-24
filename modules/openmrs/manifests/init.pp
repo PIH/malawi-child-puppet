@@ -19,6 +19,7 @@ class openmrs {
 	$get_db_from_parent_bat = "${pih_openmrs_db}getDbFromParent.bat"
 	$update_child_server_settings_sql = "${pih_openmrs_db}updateChildServerSettings.sql"
 	$update_parent_server_settings_sql = "${pih_openmrs_db}updateParentServerSettings.sql"
+	$server_uuid_text_file = "${pih_openmrs_db}serveruuid.txt"
 
 	$mysql_root_user = hiera('mysql_root_user')
 	$mysql_root_password = hiera('mysql_root_password')
@@ -44,7 +45,6 @@ class openmrs {
 	$sync_parent_name = hiera('sync_parent_name')
 	$sync_parent_address = hiera('sync_parent_address')
 	$sync_parent_uuid = hiera('sync_parent_uuid')
-	$sync_child_uuid = hiera('sync_child_uuid')
 	$sync_parent_user_name = hiera('sync_parent_user_name')
 	$sync_parent_user_password = hiera('sync_parent_user_password')
 	

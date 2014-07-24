@@ -1,5 +1,7 @@
 update global_property set property_value='<%= @child_name %>' where property='sync.server_name';
 update global_property set property_value='<%= @sync_admin_email %>' where property='sync.admin_email';
+
+-- select property_value into outfile '<%= @server_uuid_text_file %>' from global_property where property='sync.server_uuid';
 select property_value from global_property where property='sync.server_uuid' into @child_server_uuid;
 select @child_server_uuid;
 
