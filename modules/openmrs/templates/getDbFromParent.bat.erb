@@ -1,0 +1,82 @@
+﻿echo.
+echo Connect to the parent server and retrieve the db
+
+echo Set connection variables
+rem ====================================================================================
+set PARENT_SERVER=<%= @ssh_parent_address %>
+set SSH_USER=<%= @ssh_user %>
+set SSH_PORT=<%= @ssh_port %>
+set SSH_KEY=<%= @ssh_key %>
+set SSH_CREDENTIALS=-i %SSH_KEY% -P %SSH_PORT% %SSH_USER%@%PARENT_SERVER%
+set GZIP_EXE=<%= @gzip_exe %>
+set PLINK_EXE=<%= @plink_exe %>
+set PSCP_EXE=<%= @pscp_exe %>
+set CONNECT_TO_SERVER=%PLINK_EXE% %SSH_CREDENTIALS%
+rem ====================================================================================
+echo Set Db connection properties
+rem ====================================================================================
+set REMOTE_OPENMRS_DB_USER=<%= @openmrs_db %>
+set REMOTE_OPENMRS_DB_PASSWORD=<%= @parent_mysql_db_password %>
+set LOCAL_OPENMRS_DB_USER=<%= @mysql_root_user %>
+set LOCAL_OPENMRS_DB_PASSWORD=<%= @mysql_root_password %>
+rem set OPENMRS_DB=openmrs
+set OPENMRS_DB=<%= @openmrs_db %>
+set REMOTE_DB_CREDENTIALS=-u %REMOTE_OPENMRS_DB_USER% -p%REMOTE_OPENMRS_DB_PASSWORD% %OPENMRS_DB%
+set LOCAL_DB_CREDENTIALS=-u %LOCAL_OPENMRS_DB_USER% -p%LOCAL_OPENMRS_DB_PASSWORD%
+set REMOTE_DB_CONNECTION=mysql %REMOTE_DB_CREDENTIALS%
+set DROP_AND_CREATE_DB_SCRIPT=<%= @openmrs_create_db_sql %>
+set DELETE_SYNC_TABLES_DB_SCRIPT=<%= @delete_sync_tables_sql %>
+set UPDATE_CHILD_SERVER_DB_SCRIPT=<%= @update_child_server_settings_sql %>
+set UPDATE_PARENT_SERVER_DB_SCRIPT=<%= @update_parent_server_settings_sql %>
+
+echo Connect to the parent server
+%CONNECT_TO_SERVER% "ls -al"
+
+echo Show databases on the remote server
+%CONNECT_TO_SERVER% "%REMOTE_DB_CONNECTION% -e 'show databases;' "
+
+rem clear sync records on the parent server======================================
+echo Step 1/10: Clear sync records on parent server
+rem delete from sync_server_record; delete from sync_record; delete from sync_import;
+%CONNECT_TO_SERVER% "%REMOTE_DB_CONNECTION% -e 'delete from sync_server_record; delete from sync_record; delete from sync_import;' "
+
+rem dump parent DB ===========================================================
+: dump parent DB
+echo Step 2/10: Dump parent db on parent server
+%CONNECT_TO_SERVER% "mysqldump %REMOTE_DB_CREDENTIALS% -q -e --single-transaction --ignore-table=openmrs.global_property --ignore-table=openmrs.scheduler_task_config --ignore-table=openmrs.scheduler_task_config_property --ignore-table=openmrs.sync_class --ignore-table=openmrs.sync_server --ignore-table=openmrs.sync_server_class | gzip > /tmp/parent-dump.sql.gz "
+
+rem Copy db from parent server ===========================================================
+echo Step 3/10: Copy db from parent server
+%PSCP_EXE% %SSH_CREDENTIALS%:/tmp/parent-dump.sql.gz .
+
+rem unzip parent DB ===========================================================
+echo Step 4/10: Unzip parent DB
+%GZIP_EXE% -d parent-dump.sql.gz
+
+rem drop and recreate local DB ===========================================================
+echo Step 5/10: Drop and re-create local DB
+mysql %LOCAL_DB_CREDENTIALS% < %DROP_AND_CREATE_DB_SCRIPT%
+
+rem import parent db into the local server ===========================================================
+echo Step 6/10: Import parent DB
+rem DELETE mysql -u openmrs -ppa55ionFruit openmrs < parent-dump.sql
+mysql %LOCAL_DB_CREDENTIALS% %OPENMRS_DB% < parent-dump.sql
+
+rem delete sync tables ===========================================================
+echo Step 7/10: Delete sync tables
+mysql %LOCAL_DB_CREDENTIALS% %OPENMRS_DB% < %DELETE_SYNC_TABLES_DB_SCRIPT%
+
+rem start Tomcat openmrs web app
+echo Step 8/10: Start Tomcat openmrs web app
+net start Tomcat6
+
+rem wait 60 seconds for Tomcat to start
+ping -w 1000 -n 30 127.0.0.1
+
+rem configure sync child server ===========================================================
+echo Step 9/10: Configure sync child server
+mysql %LOCAL_DB_CREDENTIALS% %OPENMRS_DB% < %UPDATE_CHILD_SERVER_DB_SCRIPT%
+
+rem configure sync parent server ===========================================================
+echo Step 10/10: Configure sync parent server
+%CONNECT_TO_SERVER% "%REMOTE_DB_CONNECTION%" < %UPDATE_PARENT_SERVER_DB_SCRIPT%

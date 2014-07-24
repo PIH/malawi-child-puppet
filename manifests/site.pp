@@ -8,12 +8,14 @@ $pih_java_home = "${pih_home}\\java"
 $pih_tomcat_home = "${pih_home}\\tomcat\\"
 $pih_mysql_home = "${pih_home}\\mysql"
 $pih_putty_home = "${pih_home}\\putty"
+$pih_gzip_home = "${pih_home}\\gzip"
 	
 node default {
 	include pih_folders
+	include gzip
 	include pih_java
 	include pih_tomcat
 	include pih_mysql
-	include openmrs 
 	include putty
+	include openmrs
 }

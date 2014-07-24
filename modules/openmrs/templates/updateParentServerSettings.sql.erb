@@ -1,0 +1,24 @@
+insert into sync_server(nickname, server_type,  uuid, disabled) 
+values('<%= @child_name %>', 'CHILD', '<%= @sync_child_uuid %>', 0);
+
+select last_insert_id() into @child_server_id;
+select @child_server_id;
+
+-- add the default sync classes not to send/export
+insert into sync_server_class(class_id, server_id, send_to, receive_from) 
+select class_id, @child_server_id, 0, 0 from sync_class where default_send_to=0;
+
+select class_id from sync_class where name = 'org.openmrs' into @org_openmrs_class_id;
+-- do not send any org.openmrs classes from this parent to the child
+insert into sync_server_class(class_id, server_id, send_to, receive_from) 
+values(@org_openmrs_class_id, @child_server_id, 0, 1);
+
+select class_id from sync_class where name = 'org.openmrs.api.db.SerializedObject' into @org_openmrs_api_db_serializedobject_class_id;
+-- do not send any org.openmrs.api.db.SerializedObject classes to the parent 
+insert into sync_server_class(class_id, server_id, send_to, receive_from) 
+values(@org_openmrs_api_db_serializedobject_class_id, @child_server_id, 1, 0);
+
+select class_id from sync_class where name = 'org.openmrs.module.reporting' into @org_openmrs_module_reporting_class_id;
+-- do not send any org.openmrs.module.reporting classes to the parent 
+insert into sync_server_class(class_id, server_id, send_to, receive_from) 
+values(@org_openmrs_module_reporting_class_id, @child_server_id, 1, 0);
