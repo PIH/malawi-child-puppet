@@ -62,11 +62,6 @@ class openmrs {
 		source	=> "puppet:///modules/openmrs/openmrs.zip",		
 	} -> 
 	
-	windows::unzip { $pih_openmrs_db_zip:
-		destination => $pih_openmrs_db,
-		creates	=> $pih_openmrs_db_file,
-	} -> 
-	
 	file { $openmrs_create_db_sql: 
 		ensure  => present,
 		provider => windows, 	
