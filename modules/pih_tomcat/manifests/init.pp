@@ -56,6 +56,8 @@ class pih_tomcat {
 		provider	=> windows, 
 		command		=> "cmd.exe /c set JAVA_HOME=${pih_java_home}&&tomcat6 //US//Tomcat6 --JvmMx 512 ++JvmOptions=\"-XX:MaxPermSize=256m\"",
 		logoutput	=> true,
-	} 
+	} ->
+	
+	notify { 'pih_tomcat::stop_tomcat':}
 	
 } 

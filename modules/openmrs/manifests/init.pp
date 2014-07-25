@@ -91,16 +91,6 @@ class openmrs {
 		provider => windows, 	
 		content	=> template('openmrs/getDbFromParent.bat.erb'),	
 	} ->
-			
-	file { $pih_openmrs_modules_zip:
-		ensure  => file,
-		source	=> "puppet:///modules/openmrs/openmrs-modules.zip",		
-	} -> 
-	
-	windows::unzip { $pih_openmrs_modules_zip:
-		destination => $pih_openmrs_home,
-		creates	=> $pih_openmrs_modules,
-	} -> 
 	
 	file { $pih_openmrs_war:
 		ensure  => file,

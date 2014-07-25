@@ -29,27 +29,46 @@ set DELETE_SYNC_TABLES_DB_SCRIPT=<%= @delete_sync_tables_sql %>
 set UPDATE_CHILD_SERVER_DB_SCRIPT=<%= @update_child_server_settings_sql %>
 set UPDATE_PARENT_SERVER_DB_SCRIPT=<%= @update_parent_server_settings_sql %>
 set SERVER_UUID_TEXT_FILE=<%= @server_uuid_text_file %>
+set LOCAL_OPENMRS_MODULES=<%= @pih_openmrs_modules %>
 
 echo Connect to the parent server
 %CONNECT_TO_SERVER% "ls -al"
+if "%ERRORLEVEL%" == "0" GOTO CONNECT_TO_PARENT_MYSQL 
+echo Error Connecting to the parent server 
+exit 1
 
+:CONNECT_TO_PARENT_MYSQL
 echo Show databases on the remote server
 %CONNECT_TO_SERVER% "%REMOTE_DB_CONNECTION% -e 'show databases;' "
+if "%ERRORLEVEL%" == "0" GOTO CLEAR_PARENT_SYNC_RECORDS 
+echo Error Connecting to the parent MYSQL Server 
+exit 1
 
+:CLEAR_PARENT_SYNC_RECORDS
 rem clear sync records on the parent server======================================
 echo Step 1/10: Clear sync records on parent server
 rem delete from sync_server_record; delete from sync_record; delete from sync_import;
 %CONNECT_TO_SERVER% "%REMOTE_DB_CONNECTION% -e 'delete from sync_server_record; delete from sync_record; delete from sync_import;' "
+if "%ERRORLEVEL%" == "0" GOTO DUMP_PARENT_DB 
+echo Error Deleting sync records on parent server 
 
 rem dump parent DB ===========================================================
-: dump parent DB
+:DUMP_PARENT_DB
 echo Step 2/10: Dump parent db on parent server
 %CONNECT_TO_SERVER% "mysqldump %REMOTE_DB_CREDENTIALS% -q -e --single-transaction | gzip > /tmp/parent-dump.sql.gz "
+if "%ERRORLEVEL%" == "0" GOTO DOWNLOAD_DB_FROM_PARENT 
+echo Error dumping parent db
+exit 1
 
+:DOWNLOAD_DB_FROM_PARENT
 rem Copy db from parent server ===========================================================
 echo Step 3/10: Copy db from parent server
 %PSCP_EXE% %SSH_CREDENTIALS%:/tmp/parent-dump.sql.gz .
+if "%ERRORLEVEL%" == "0" GOTO UNZIP_PARENT_DB 
+echo Error downloading parent db
+exit 1
 
+:UNZIP_PARENT_DB
 rem unzip parent DB ===========================================================
 echo Step 4/10: Unzip parent DB
 %GZIP_EXE% -f -d parent-dump.sql.gz
@@ -65,7 +84,12 @@ mysql %LOCAL_DB_CREDENTIALS% %OPENMRS_DB% < parent-dump.sql
 
 rem delete sync tables ===========================================================
 echo Step 7/10: Delete sync tables
-mysql %LOCAL_DB_CREDENTIALS% %OPENMRS_DB% < %DELETE_SYNC_TABLES_DB_SCRIPT%
+mysql %LOCAL_DB_CREDENTIALS% %OPENMRS_DB% < %DELETE_SYNC_TABLES_DB_SCRIPT% 
+
+rem download openmrs modules from the parent ===========================================================
+echo Step x/10: Delete sync tables
+del /F /Q %LOCAL_OPENMRS_MODULES%\*
+%PSCP_EXE% %SSH_CREDENTIALS%:/home/tomcat6/.OpenMRS/modules/* %LOCAL_OPENMRS_MODULES%
 
 rem start Tomcat openmrs web app
 echo Step 8/10: Start Tomcat openmrs web app
