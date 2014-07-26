@@ -13,13 +13,13 @@ class openmrs {
 	$pih_openmrs_db_bat = "${pih_openmrs_db}dropAndCreateDb.sql"
 	$pih_openmrs_db_file_linux = regsubst($pih_openmrs_db_file, '[\\]', '/', G) 
 	
-	$pih_openmrs_db_zip = "${pih_home_bin}\\openmrs.zip"
 	$openmrs_create_db_sql = "${pih_openmrs_db}dropAndCreateDb.sql"
 	$delete_sync_tables_sql = "${pih_openmrs_db}deleteSyncTables.sql"
 	$get_db_from_parent_bat = "${pih_openmrs_db}getDbFromParent.bat"
 	$update_child_server_settings_sql = "${pih_openmrs_db}updateChildServerSettings.sql"
 	$update_parent_server_settings_sql = "${pih_openmrs_db}updateParentServerSettings.sql"
 	$server_uuid_text_file = "${pih_openmrs_db}serveruuid.txt"
+	$output_server_uuid = regsubst($server_uuid_text_file, '[\\]', '/', G)
 
 	$mysql_root_user = hiera('mysql_root_user')
 	$mysql_root_password = hiera('mysql_root_password')
@@ -57,11 +57,6 @@ class openmrs {
 		ensure  => directory,
 	} ->
 	
-	file { $pih_openmrs_db_zip:
-		ensure  => file,
-		source	=> "puppet:///modules/openmrs/openmrs.zip",		
-	} -> 
-	
 	file { $openmrs_create_db_sql: 
 		ensure  => present,
 		provider => windows, 	
@@ -78,12 +73,6 @@ class openmrs {
 		ensure  => present,
 		provider => windows, 	
 		content	=> template('openmrs/updateChildServerSettings.sql.erb'),	
-	} ->
-	
-	file { $update_parent_server_settings_sql: 
-		ensure  => present,
-		provider => windows, 	
-		content	=> template('openmrs/updateParentServerSettings.sql.erb'),	
 	} ->
 	
 	file { $get_db_from_parent_bat: 
@@ -115,6 +104,14 @@ class openmrs {
 		timeout		=> 0, 
 		command		=> "cmd.exe /c ${get_db_from_parent_bat}",
 		logoutput	=> true,
+		
+	} -> 
+		
+	file { $update_parent_server_settings_sql: 
+		ensure  => present,
+		provider => windows, 	
+		content	=> template('openmrs/updateParentServerSettings.sql.erb'),
+		
 	} 
-	
+
 }

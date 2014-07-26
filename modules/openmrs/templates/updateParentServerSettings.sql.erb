@@ -1,9 +1,9 @@
 -- load data infile '<%= @server_uuid_text_file %>' into table sync_temp_uuid;
 -- select uuid from sync_temp_uuid into @child_server_uuid;
-select @child_server_uuid;
+-- select @child_server_uuid;
 
 insert into sync_server(nickname, server_type,  uuid, disabled) 
-values('<%= @child_name %>', 'CHILD', @child_server_uuid, 0);
+values('<%= @child_name %>', 'CHILD', '<%= @output_server_uuid %>', 0); 
 
 select last_insert_id() into @child_server_id;
 select @child_server_id;
