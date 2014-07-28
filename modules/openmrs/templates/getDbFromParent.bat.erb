@@ -48,14 +48,14 @@ exit 1
 rem clear sync records on the parent server======================================
 echo Step 1/10: Clear sync records on parent server
 rem delete from sync_server_record; delete from sync_record; delete from sync_import;
-rem %CONNECT_TO_SERVER% "%REMOTE_DB_CONNECTION% -e 'delete from sync_server_record; delete from sync_record; delete from sync_import;' "
+%CONNECT_TO_SERVER% "%REMOTE_DB_CONNECTION% -e 'delete from sync_server_record; delete from sync_record; delete from sync_import;' "
 if "%ERRORLEVEL%" == "0" GOTO DUMP_PARENT_DB 
 echo Error Deleting sync records on parent server 
 
 rem dump parent DB ===========================================================
 :DUMP_PARENT_DB
 echo Step 2/10: Dump parent db on parent server
-rem %CONNECT_TO_SERVER% "mysqldump %REMOTE_DB_CREDENTIALS% -q -e --single-transaction | gzip > /tmp/parent-dump.sql.gz "
+%CONNECT_TO_SERVER% "mysqldump %REMOTE_DB_CREDENTIALS% -q -e --single-transaction | gzip > /tmp/parent-dump.sql.gz "
 if "%ERRORLEVEL%" == "0" GOTO DOWNLOAD_DB_FROM_PARENT 
 echo Error dumping parent db
 exit 1
@@ -63,7 +63,7 @@ exit 1
 :DOWNLOAD_DB_FROM_PARENT
 rem Copy db from parent server ===========================================================
 echo Step 3/10: Copy db from parent server
-rem %PSCP_EXE% %SSH_CREDENTIALS%:/tmp/parent-dump.sql.gz .
+%PSCP_EXE% %SSH_CREDENTIALS%:/tmp/parent-dump.sql.gz .
 if "%ERRORLEVEL%" == "0" GOTO UNZIP_PARENT_DB 
 echo Error downloading parent db
 exit 1
@@ -71,39 +71,74 @@ exit 1
 :UNZIP_PARENT_DB
 rem unzip parent DB ===========================================================
 echo Step 4/10: Unzip parent DB
-rem %GZIP_EXE% -f -d parent-dump.sql.gz
+%GZIP_EXE% -f -d parent-dump.sql.gz
+if "%ERRORLEVEL%" == "0" GOTO RECREATE_LOCAL_DB 
+echo Error unzipping parent db
+exit 1
 
+:RECREATE_LOCAL_DB
 rem drop and recreate local DB ===========================================================
 echo Step 5/10: Drop and re-create local DB
-rem mysql %LOCAL_DB_CREDENTIALS% < %DROP_AND_CREATE_DB_SCRIPT%
+mysql %LOCAL_DB_CREDENTIALS% < %DROP_AND_CREATE_DB_SCRIPT%
+if "%ERRORLEVEL%" == "0" GOTO SOURCE_LOCAL_DB 
+echo Error dropping and recreating local db
+exit 1
 
+:SOURCE_LOCAL_DB
 rem import parent db into the local server ===========================================================
 echo Step 6/10: Import parent DB
-rem mysql %LOCAL_DB_CREDENTIALS% %OPENMRS_DB% < parent-dump.sql
+mysql %LOCAL_DB_CREDENTIALS% %OPENMRS_DB% < parent-dump.sql
+if "%ERRORLEVEL%" == "0" GOTO DELETE_LOCAL_SYNC_TABLES 
+echo Error importing local db
+exit 1
 
+:DELETE_LOCAL_SYNC_TABLES
 rem delete sync tables ===========================================================
 echo Step 7/10: Delete sync tables
 mysql %LOCAL_DB_CREDENTIALS% %OPENMRS_DB% < %DELETE_SYNC_TABLES_DB_SCRIPT% 
+if "%ERRORLEVEL%" == "0" GOTO DOWNLOAD_OPENMRS_MODULES 
+echo Error importing local db
+exit 1
 
+:DOWNLOAD_OPENMRS_MODULES
 rem download openmrs modules from the parent ===========================================================
 echo Step x/10: Delete sync tables
-rem del /F /Q %LOCAL_OPENMRS_MODULES%\*
-rem %PSCP_EXE% %SSH_CREDENTIALS%:/home/tomcat6/.OpenMRS/modules/* %LOCAL_OPENMRS_MODULES%
+del /F /Q %LOCAL_OPENMRS_MODULES%\*
+%PSCP_EXE% %SSH_CREDENTIALS%:/home/tomcat6/.OpenMRS/modules/* %LOCAL_OPENMRS_MODULES%
+if "%ERRORLEVEL%" == "0" GOTO START_TOMCAT 
+echo Failed to download  openmrs modules from parent
 
+:START_TOMCAT
 rem start Tomcat openmrs web app
 echo Step 8/10: Start Tomcat openmrs web app
 net start Tomcat6
 
 rem wait 180 seconds for Tomcat to start
-ping -w 1000 -n 90 127.0.0.1
+ping -w 1000 -n 30 127.0.0.1
 
 rem delete temp text file in which we store the child server uuid
 del /F /Q %SERVER_UUID_TEXT_FILE%
 
+:CONFIGURE_CHILD_SETTINGS
 rem configure sync child server ===========================================================
 echo Step 9/10: Configure sync child server
 mysql %LOCAL_DB_CREDENTIALS% %OPENMRS_DB% < %UPDATE_CHILD_SERVER_DB_SCRIPT%
+if "%ERRORLEVEL%" == "0" GOTO UPLOAD_CHILD_SERVER_UUID 
+echo Error configuring child server
 
+:UPLOAD_CHILD_SERVER_UUID
+echo Step x/10: Upload child server UUID text file to the parent server
+%PSCP_EXE% -i %SSH_KEY% -P %SSH_PORT% %SERVER_UUID_TEXT_FILE% %SSH_USER%@%PARENT_SERVER%:/tmp/
+if "%ERRORLEVEL%" == "0" GOTO CONFIGURE_PARENT_SETTINGS 
+echo Error uploading child server uuid text file to parent /tmp/ folder
+exit 0
+
+:CONFIGURE_PARENT_SETTINGS
 rem configure sync parent server ===========================================================
 echo Step 10/10: Configure sync parent server
-rem %CONNECT_TO_SERVER% "%REMOTE_DB_CONNECTION%" < %UPDATE_PARENT_SERVER_DB_SCRIPT%
+%CONNECT_TO_SERVER% "%REMOTE_DB_CONNECTION%" < %UPDATE_PARENT_SERVER_DB_SCRIPT%
+if "%ERRORLEVEL%" == "0" GOTO END 
+echo Error registering child server with the parent server
+exit 0
+
+:END

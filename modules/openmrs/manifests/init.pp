@@ -18,9 +18,7 @@ class openmrs {
 	$get_db_from_parent_bat = "${pih_openmrs_db}getDbFromParent.bat"
 	$update_child_server_settings_sql = "${pih_openmrs_db}updateChildServerSettings.sql"
 	$update_parent_server_settings_sql = "${pih_openmrs_db}updateParentServerSettings.sql"
-	$server_uuid_text_file = "${pih_openmrs_db}serveruuid.txt"
-	$output_server_uuid = regsubst($server_uuid_text_file, '[\\]', '/', G)
-
+	
 	$mysql_root_user = hiera('mysql_root_user')
 	$mysql_root_password = hiera('mysql_root_password')
 	$openmrs_db = hiera('openmrs_db')
@@ -48,6 +46,12 @@ class openmrs {
 	$sync_parent_user_name = hiera('sync_parent_user_name')
 	$sync_parent_user_password = hiera('sync_parent_user_password')
 	
+	$server_uuid_text_file = "${pih_openmrs_db}${child_name}-serveruuid.txt"
+	$output_server_uuid = regsubst($server_uuid_text_file, '[\\]', '/', G)
+	$uploaded_child_server_uuid = "/tmp/${child_name}-serveruuid.txt"
+	
+	notify{"The value of uploaded_child_server_uuid is ${uploaded_child_server_uuid}": }
+	
 	file { $pih_openmrs_home:
 		ensure  => directory,
 		require => File[$pih_home],
@@ -73,6 +77,12 @@ class openmrs {
 		ensure  => present,
 		provider => windows, 	
 		content	=> template('openmrs/updateChildServerSettings.sql.erb'),	
+	} ->
+	
+	file { $update_parent_server_settings_sql: 
+		ensure  => present,
+		provider => windows, 	
+		content	=> template('openmrs/updateParentServerSettings.sql.erb'),		
 	} ->
 	
 	file { $get_db_from_parent_bat: 
@@ -105,13 +115,6 @@ class openmrs {
 		command		=> "cmd.exe /c ${get_db_from_parent_bat}",
 		logoutput	=> true,
 		
-	} -> 
-		
-	file { $update_parent_server_settings_sql: 
-		ensure  => present,
-		provider => windows, 	
-		content	=> template('openmrs/updateParentServerSettings.sql.erb'),
-		
-	} 
+	}
 
 }
