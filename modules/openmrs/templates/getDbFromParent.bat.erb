@@ -15,6 +15,7 @@ set CONNECT_TO_SERVER=%PLINK_EXE% %SSH_CREDENTIALS%
 rem ====================================================================================
 echo Set Db connection properties
 rem ====================================================================================
+set MYSQL_EXE=<%= @mysql_exe %>
 set REMOTE_OPENMRS_DB_USER=<%= @mysql_root_user %>
 set REMOTE_OPENMRS_DB_PASSWORD=<%= @parent_mysql_db_password %>
 set LOCAL_OPENMRS_DB_USER=<%= @mysql_root_user %>
@@ -32,7 +33,7 @@ set SERVER_UUID_TEXT_FILE=<%= @server_uuid_text_file %>
 set LOCAL_OPENMRS_MODULES=<%= @pih_openmrs_modules %>
 
 echo Connect to the parent server
-%CONNECT_TO_SERVER% "ls -al"
+echo y | %CONNECT_TO_SERVER% "ls -al"
 if "%ERRORLEVEL%" == "0" GOTO CONNECT_TO_PARENT_MYSQL 
 echo Error Connecting to the parent server 
 exit 1
@@ -79,7 +80,7 @@ exit 1
 :RECREATE_LOCAL_DB
 rem drop and recreate local DB ===========================================================
 echo Step 5/10: Drop and re-create local DB
-mysql %LOCAL_DB_CREDENTIALS% < %DROP_AND_CREATE_DB_SCRIPT%
+%MYSQL_EXE% %LOCAL_DB_CREDENTIALS% < %DROP_AND_CREATE_DB_SCRIPT%
 if "%ERRORLEVEL%" == "0" GOTO SOURCE_LOCAL_DB 
 echo Error dropping and recreating local db
 exit 1
@@ -87,7 +88,7 @@ exit 1
 :SOURCE_LOCAL_DB
 rem import parent db into the local server ===========================================================
 echo Step 6/10: Import parent DB
-mysql %LOCAL_DB_CREDENTIALS% %OPENMRS_DB% < parent-dump.sql
+%MYSQL_EXE% %LOCAL_DB_CREDENTIALS% %OPENMRS_DB% < parent-dump.sql
 if "%ERRORLEVEL%" == "0" GOTO DELETE_LOCAL_SYNC_TABLES 
 echo Error importing local db
 exit 1
@@ -95,7 +96,7 @@ exit 1
 :DELETE_LOCAL_SYNC_TABLES
 rem delete sync tables ===========================================================
 echo Step 7/10: Delete sync tables
-mysql %LOCAL_DB_CREDENTIALS% %OPENMRS_DB% < %DELETE_SYNC_TABLES_DB_SCRIPT% 
+%MYSQL_EXE% %LOCAL_DB_CREDENTIALS% %OPENMRS_DB% < %DELETE_SYNC_TABLES_DB_SCRIPT% 
 if "%ERRORLEVEL%" == "0" GOTO DOWNLOAD_OPENMRS_MODULES 
 echo Error importing local db
 exit 1
@@ -122,7 +123,7 @@ del /F /Q %SERVER_UUID_TEXT_FILE%
 :CONFIGURE_CHILD_SETTINGS
 rem configure sync child server ===========================================================
 echo Step 9/10: Configure sync child server
-mysql %LOCAL_DB_CREDENTIALS% %OPENMRS_DB% < %UPDATE_CHILD_SERVER_DB_SCRIPT%
+%MYSQL_EXE% %LOCAL_DB_CREDENTIALS% %OPENMRS_DB% < %UPDATE_CHILD_SERVER_DB_SCRIPT%
 if "%ERRORLEVEL%" == "0" GOTO UPLOAD_CHILD_SERVER_UUID 
 echo Error configuring child server
 
