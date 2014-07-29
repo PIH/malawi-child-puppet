@@ -17,6 +17,10 @@ class openmrs {
 	$openmrs_create_db_sql = "${pih_openmrs_db}dropAndCreateDb.sql"
 	$delete_sync_tables_sql = "${pih_openmrs_db}deleteSyncTables.sql"
 	$get_db_from_parent_bat = "${pih_openmrs_db}getDbFromParent.bat"
+	$check_For_Unsynced_Records_bat = "${pih_openmrs_db}checkForUnsyncedRecords.bat"
+	$remove_changeloglock_bat = "${pih_openmrs_db}remove_changeloglock.bat"
+	$remove_unsynced_changes_bat = "${pih_openmrs_db}remove_unsynced_changes.bat"
+	$prepare_child_server_bat = "${pih_openmrs_db}prepare_child_server.bat"
 	$update_child_server_settings_sql = "${pih_openmrs_db}updateChildServerSettings.sql"
 	$update_parent_server_settings_sql = "${pih_openmrs_db}updateParentServerSettings.sql"
 	
@@ -90,6 +94,30 @@ class openmrs {
 		ensure  => present,
 		provider => windows, 	
 		content	=> template('openmrs/getDbFromParent.bat.erb'),	
+	} ->
+	
+	file { $prepare_child_server_bat: 
+		ensure  => present,
+		provider => windows, 	
+		content	=> template('openmrs/prepare_child_server.bat.erb'),	
+	} ->
+	
+	file { $check_For_Unsynced_Records_bat: 
+		ensure  => present,
+		provider => windows, 	
+		content	=> template('openmrs/checkForUnsyncedRecords.bat.erb'),	
+	} ->
+	
+	file { $remove_changeloglock_bat: 
+		ensure  => present,
+		provider => windows, 	
+		content	=> template('openmrs/remove_changeloglock.bat.erb'),	
+	} ->
+
+	file { $remove_unsynced_changes_bat: 
+		ensure  => present,
+		provider => windows, 	
+		content	=> template('openmrs/remove_unsynced_changes.bat.erb'),	
 	} ->
 	
 	file { $pih_openmrs_war:

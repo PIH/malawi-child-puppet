@@ -10,6 +10,7 @@ class pih_tomcat {
 	
 	$pih_tomcat_zip = "${pih_home_bin}\\${tomcat_zip}"
 	$pih_install_tomcat = "${pih_tomcat_home}\\bin\\install_tomcat.bat"
+	$clean_tomcat_script = "${pih_tomcat_home}\\bin\\cleanTomcat.bat"
 	
 	file { $pih_tomcat_home:
 		ensure  => directory,
@@ -27,6 +28,12 @@ class pih_tomcat {
 		creates	=> "${pih_tomcat_home}\\bin",
 		require => File[$pih_tomcat_home],
 	} ->
+	
+	file { $clean_tomcat_script:
+		ensure  => file,
+		source	=> "puppet:///modules/pih_tomcat/cleanTomcat.bat",		
+		require => File[$pih_tomcat_home],
+	}	
 	
 	windows::environment { 'CATALINA_HOME': 
 		value	=>	$pih_tomcat_home,
