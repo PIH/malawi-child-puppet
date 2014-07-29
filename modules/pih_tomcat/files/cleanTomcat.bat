@@ -1,3 +1,26 @@
+@echo off
+
+echo.
+echo About to cleanup tomcat folder.
+echo.
+echo Press enter to continue.
+pause
+echo.
+
+rem stop openmrs =============================================================
+echo Step 1/7: Stopping OpenMRS localhost
+set PWD=%CD%
+net stop Tomcat6
+cd /d %PWD%
+cls
+
+: fake messages to clear screen
+echo.
+echo Starting remote server preparation
+echo Stopping OpenMRS localhost
+
+rem cleanup ==================================================================
+echo Cleaning up tomcat folders
 del /F /Q ..\conf\Catalina\localhost\openmrs.xml
 rd /S /Q ..\bin\activemq-data
 del /F /Q /S ..\logs\*.*
@@ -5,3 +28,10 @@ del /F /Q /S ..\logs\*.*
 rd /S /Q ..\webapps\openmrs
 rd /S /Q ..\work\Catalina
 del /F /Q c:\pih\openmrs\openmrs.log
+
+rem ready and done ===========================================================
+echo.
+echo Cleanup finished. You can now restart tomcat.
+echo.
+
+pause

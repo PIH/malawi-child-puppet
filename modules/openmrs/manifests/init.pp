@@ -21,6 +21,8 @@ class openmrs {
 	$remove_changeloglock_bat = "${pih_openmrs_db}remove_changeloglock.bat"
 	$remove_unsynced_changes_bat = "${pih_openmrs_db}remove_unsynced_changes.bat"
 	$prepare_child_server_bat = "${pih_openmrs_db}prepare_child_server.bat"
+	$register_Child_With_Parent_bat = "${pih_openmrs_db}registerChildWithParent.bat"
+	
 	$update_child_server_settings_sql = "${pih_openmrs_db}updateChildServerSettings.sql"
 	$update_parent_server_settings_sql = "${pih_openmrs_db}updateParentServerSettings.sql"
 	
@@ -119,6 +121,12 @@ class openmrs {
 		provider => windows, 	
 		content	=> template('openmrs/remove_unsynced_changes.bat.erb'),	
 	} ->
+	
+	file { $register_Child_With_Parent_bat: 
+		ensure  => present,
+		provider => windows, 	
+		content	=> template('openmrs/registerChildWithParent.bat.erb'),	
+	} ->	
 	
 	file { $pih_openmrs_war:
 		ensure  => file,
