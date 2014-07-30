@@ -9,6 +9,20 @@ class gzip {
 		require => File[$pih_home],
 	}
 	
+	file { $tail_exe: 
+		ensure  => present,
+		provider => windows, 	
+		source	=> "puppet:///modules/gzip/tail.exe",
+		require => File[$pih_home_bin],
+	} 
+	
+	file { $subinacl_exe: 
+		ensure  => present,
+		provider => windows, 	
+		source	=> "puppet:///modules/gzip/subinacl.exe",
+		require => File[$pih_home_bin],
+	} 
+	
 	file { $pih_gzip_zip:
 		ensure  => file,
 		source	=> "puppet:///modules/gzip/${gzip_zip}",		

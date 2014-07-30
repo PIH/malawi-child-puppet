@@ -1,6 +1,7 @@
 class pih_tomcat {
     
-	require pih_java
+	require pih_java 
+	require gzip
 	
 	if $architecture == 'x64' { 
 		$tomcat_zip = 'tomcat-6.0.32-x64.zip'
@@ -64,6 +65,15 @@ class pih_tomcat {
 		command		=> "cmd.exe /c set JAVA_HOME=${pih_java_home}&&tomcat6 //US//Tomcat6 --JvmMx 512 ++JvmOptions=\"-XX:MaxPermSize=256m\"",
 		logoutput	=> true,
 	} ->
+	
+	exec { 'allow_openmrs_user_to_control_tomcat': 
+		path		=> $::path,
+		cwd			=> "${pih_home_bin}", 
+		provider	=> windows, 
+		command		=> "cmd.exe /c ${subinacl_exe} /SERVICE Tomcat6 /GRANT=${windows_openmrs_user}=F",
+		logoutput	=> true,
+		timeout		=> 0, 
+	} ->	
 	
 	notify { 'pih_tomcat::stop_tomcat':}
 	

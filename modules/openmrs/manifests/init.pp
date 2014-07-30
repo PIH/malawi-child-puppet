@@ -3,6 +3,7 @@ class openmrs {
 	require pih_java
 	require pih_tomcat
 	require pih_mysql
+	require gzip 
 	require putty 
 	
 	$pih_openmrs_home = "${pih_home}\\openmrs\\"
@@ -22,6 +23,9 @@ class openmrs {
 	$remove_unsynced_changes_bat = "${pih_openmrs_db}remove_unsynced_changes.bat"
 	$prepare_child_server_bat = "${pih_openmrs_db}prepare_child_server.bat"
 	$register_Child_With_Parent_bat = "${pih_openmrs_db}registerChildWithParent.bat"
+	
+	$stop_OpenMRS_bat = "${pih_openmrs_home}stopOpenMRS.bat"
+	$start_OpenMRS_bat = "${pih_openmrs_home}startOpenMRS.bat"
 	
 	$update_child_server_settings_sql = "${pih_openmrs_db}updateChildServerSettings.sql"
 	$update_parent_server_settings_sql = "${pih_openmrs_db}updateParentServerSettings.sql"
@@ -78,7 +82,19 @@ class openmrs {
 		ensure  => present,
 		provider => windows, 	
 		source	=> "puppet:///modules/openmrs/deleteSyncTables.sql",
-	} 
+	} -> 
+
+	file { $stop_OpenMRS_bat: 
+		ensure  => present,
+		provider => windows, 	
+		source	=> "puppet:///modules/openmrs/stopOpenMRS.bat",
+	} ->  
+
+	file { $start_OpenMRS_bat: 
+		ensure  => present,
+		provider => windows, 	
+		content	=> template('openmrs/startOpenMRS.bat.erb'),	
+	} -> 
 
 	file { $update_child_server_settings_sql: 
 		ensure  => present,
