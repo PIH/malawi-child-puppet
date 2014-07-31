@@ -49,7 +49,7 @@ class openmrs {
 	$pih_openmrs_war = "${pih_tomcat_home}\\webapps\\openmrs.war"
 	$pih_openmrs_runtime_properties = "${pih_openmrs_home}openmrs-runtime.properties"
 	
-	$child_name = hiera('child_name')
+	$child_name = $hostname
 	$sync_admin_email = hiera('sync_admin_email')
 	$sync_parent_name = hiera('sync_parent_name')
 	$sync_parent_address = hiera('sync_parent_address')
@@ -69,6 +69,10 @@ class openmrs {
 	} ->
 	
 	file { $pih_openmrs_db:
+		ensure  => directory,
+	} ->
+
+	file { $pih_openmrs_modules:
 		ensure  => directory,
 	} ->
 	

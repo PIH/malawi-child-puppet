@@ -16,17 +16,17 @@ class pih_tomcat {
 	file { $pih_tomcat_home:
 		ensure  => directory,
 		require => File[$pih_home],
-	}
+	} -> 
 	
 	file { $pih_tomcat_zip:
 		ensure  => file,
 		source	=> "puppet:///modules/pih_tomcat/${tomcat_zip}",		
 		require => File[$pih_tomcat_home],
-	}
+	} -> 
 	
 	windows::unzip { $pih_tomcat_zip:
 		destination => $pih_tomcat_home,
-		creates	=> "${pih_tomcat_home}\\bin",
+		creates	=> "${pih_tomcat_home}\\bin\\catalina.bat",
 		require => File[$pih_tomcat_home],
 	} ->
 	
@@ -34,7 +34,7 @@ class pih_tomcat {
 		ensure  => file,
 		source	=> "puppet:///modules/pih_tomcat/cleanTomcat.bat",		
 		require => File[$pih_tomcat_home],
-	}	
+	} -> 	
 	
 	windows::environment { 'CATALINA_HOME': 
 		value	=>	$pih_tomcat_home,
