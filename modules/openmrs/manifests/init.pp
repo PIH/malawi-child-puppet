@@ -6,7 +6,6 @@ class openmrs {
 	require gzip 
 	require putty 
 	
-	$pih_openmrs_home = "${pih_home}\\openmrs\\"
 	$mysql_exe = "${pih_mysql_home}\\bin\\mysql.exe"
 	$pih_openmrs_home_linux = regsubst($pih_openmrs_home, '[\\]', '/', G) 
 	$pih_openmrs_modules = "${pih_openmrs_home}\\modules\\"

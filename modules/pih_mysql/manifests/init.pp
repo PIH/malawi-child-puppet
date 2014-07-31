@@ -45,7 +45,7 @@ class pih_mysql {
 		command		=> "cmd.exe /c net stop mysql",
 		onlyif		=> "cmd.exe /c sc query mysql",
 		unless		=> "cmd.exe /c sc query mysql | find \"STOPPED\"",
-		logoutput	=> true,
+		logoutput	=> true, 
 	} -> 
 	
 	exec { 'remove_mysql': 

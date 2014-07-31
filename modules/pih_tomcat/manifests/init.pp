@@ -12,6 +12,8 @@ class pih_tomcat {
 	$pih_tomcat_zip = "${pih_home_bin}\\${tomcat_zip}"
 	$pih_install_tomcat = "${pih_tomcat_home}\\bin\\install_tomcat.bat"
 	$clean_tomcat_script = "${pih_tomcat_home}\\bin\\cleanTomcat.bat"
+	$label_clean_tomcat = hiera('label_clean_tomcat')
+	$clean_tomcat_lnk = "${openmrs_startup_menu}\\CleanTomcat.lnk"
 	
 	file { $pih_tomcat_home:
 		ensure  => directory,
@@ -35,6 +37,12 @@ class pih_tomcat {
 		source	=> "puppet:///modules/pih_tomcat/cleanTomcat.bat",		
 		require => File[$pih_tomcat_home],
 	} -> 	
+	
+	windows::shortcut { $clean_tomcat_lnk:
+	  target      => $clean_tomcat_script,
+	  working_directory	=> "${pih_tomcat_home}\\bin", 
+	  description => "${label_clean_tomcat}",
+	} ->
 	
 	windows::environment { 'CATALINA_HOME': 
 		value	=>	$pih_tomcat_home,

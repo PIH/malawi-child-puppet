@@ -8,13 +8,16 @@ class pih_folders {
 		ensure  => directory,
 	} -> 
 	
-	file { $openmrs_startup_menu:
-		ensure  => directory,
+	exec { 'remove_openmrs_startup_menu': 
+		path		=> $::path,
+		provider	=> windows, 
+		command		=> "cmd.exe /c rd /S /Q ${openmrs_startup_menu}",
+		onlyif		=> "cmd.exe /c dir ${openmrs_startup_menu}",
+		logoutput	=> true,
 	} -> 
 	
-	windows::shortcut { $start_openmrs_lnk:
-	  target      => 'C:\pih\openmrs\startOpenMRS.bat',
-	  working_directory	=> 'C:\pih\openmrs', 
-	  description => 'Start OpenMRS',
-	}
+	file { $openmrs_startup_menu:
+		ensure  => directory,
+	} 
+	
 }

@@ -3,6 +3,7 @@ if $osfamily == 'windows' {
 }
 
 $pih_home = hiera('pih_home')
+$pih_openmrs_home = "${pih_home}\\openmrs\\"
 $windows_openmrs_user = hiera('windows_openmrs_user')
 $pih_home_bin = "${pih_home}\\bin"
 $pih_java_home = "${pih_home}\\java"
@@ -12,7 +13,7 @@ $pih_putty_home = "${pih_home}\\putty"
 $pih_gzip_home = "${pih_home}\\gzip"
 $tail_exe = "${pih_home_bin}\\tail.exe"
 $subinacl_exe = "${pih_home_bin}\\subinacl.exe"
-$win_startup_menu = 'c:\ProgramData\Microsoft\Windows\Start Menu\Programs'
+$win_startup_menu = hiera('win_startup_menu')
 $openmrs_startup_menu = "${win_startup_menu}\\OpenMRS" 
 $start_openmrs_lnk = "${openmrs_startup_menu}\\StartOpenMRS.lnk"
 
