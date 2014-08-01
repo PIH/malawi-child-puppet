@@ -35,7 +35,7 @@ set LOCAL_OPENMRS_MODULES=<%= @pih_openmrs_modules %>
 set LOGFILE=sync.log
 
 echo Connect to the parent server
-:CONNECT_TO_PARENT_MYSQL
+:CONNECT_TO_PARENT_SSH_SERVER
 echo y | %CONNECT_TO_SERVER% "ls -al"
 if "%ERRORLEVEL%" == "0" GOTO CONNECT_TO_PARENT_MYSQL 
 echo Error Connecting to the parent server 

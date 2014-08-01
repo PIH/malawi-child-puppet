@@ -52,7 +52,7 @@ echo Exiting now
 exit 1
 
 echo Connect to the parent server
-:CONNECT_TO_PARENT_MYSQL
+:CONNECT_TO_PARENT_SSH_SERVER
 echo y | %CONNECT_TO_SERVER% "ls -al"
 if "%ERRORLEVEL%" == "0" GOTO CONNECT_TO_PARENT_MYSQL 
 echo Error Connecting to the parent server 
@@ -60,6 +60,7 @@ exit 1
 
 :CONNECT_TO_PARENT_MYSQL
 echo Show databases on the remote server
+echo %CONNECT_TO_SERVER% "%REMOTE_DB_CONNECTION% -e 'show databases;' "
 %CONNECT_TO_SERVER% "%REMOTE_DB_CONNECTION% -e 'show databases;' "
 if "%ERRORLEVEL%" == "0" GOTO CLEAR_PARENT_SYNC_RECORDS 
 echo Error Connecting to the parent MYSQL Server 
@@ -84,6 +85,7 @@ exit 1
 :DOWNLOAD_DB_FROM_PARENT
 rem Copy db from parent server ===========================================================
 echo Step 3/10: Copy db from parent server
+echo %PSCP_EXE% %SSH_CREDENTIALS%:/tmp/parent-dump.sql.gz .
 %PSCP_EXE% %SSH_CREDENTIALS%:/tmp/parent-dump.sql.gz .
 if "%ERRORLEVEL%" == "0" GOTO UNZIP_PARENT_DB 
 echo Error downloading parent db

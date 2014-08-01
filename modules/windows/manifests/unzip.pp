@@ -61,6 +61,7 @@ define windows::unzip(
     creates     => $creates,
     refreshonly => $refreshonly,
     unless      => $unless,
-    provider    => $provider,
+    provider    => $provider, 
+	timeout		=> 0,
   }
 }
