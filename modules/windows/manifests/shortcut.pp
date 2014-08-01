@@ -16,6 +16,7 @@ define windows::shortcut(
   exec { "windows-shortcut-${path}":
     command  => template('windows/shortcut.ps1.erb'),
     creates  => $path,
-    provider => 'powershell',
+    provider => 'powershell', 
+    timeout   => 0, 
   }
 }
