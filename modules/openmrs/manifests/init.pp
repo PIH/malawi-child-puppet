@@ -25,6 +25,22 @@ class openmrs {
 	
 	$stop_OpenMRS_bat = "${pih_openmrs_home}stopOpenMRS.bat"
 	$start_OpenMRS_bat = "${pih_openmrs_home}startOpenMRS.bat"
+	$label_shutdown_openmrs = hiera('label_shutdown_openmrs')
+	$shutdown_openmrs_lnk = "${openmrs_startup_menu}\\Shutdown OpenMRS.lnk"
+	$label_start_openmrs = hiera('label_start_openmrs')
+	$start_openmrs_lnk = "${openmrs_startup_menu}\\Start OpenMRS.lnk"
+	$check_for_unsynced_records_lnk = "${openmrs_startup_menu}\\Check for Unsynced records.lnk"
+	$label_check_for_unsynced_records = hiera('label_check_for_unsynced_records')
+	$label_prepare_child_server = hiera('label_prepare_child_server')
+	$prepare_child_server_lnk = "${openmrs_startup_menu}\\Prepare Child Server.lnk"
+	
+	$label_remove_changelock = hiera('label_remove_changelock')
+	$remove_changeloglock_lnk = "${openmrs_startup_menu}\\Remove Changelock.lnk"
+	$label_unsynced_changes = hiera('label_unsynced_changes')
+	$remove_unsynced_changes_lnk = "${openmrs_startup_menu}\\Remove Unsynced Changes.lnk"
+	
+	$label_register_child_with_parent = hiera('label_register_child_with_parent')
+	$register_child_with_parent_lnk = "${openmrs_startup_menu}\\Register Child with Parent.lnk"
 	
 	$update_child_server_settings_sql = "${pih_openmrs_db}updateChildServerSettings.sql"
 	$update_parent_server_settings_sql = "${pih_openmrs_db}updateParentServerSettings.sql"
@@ -93,11 +109,23 @@ class openmrs {
 		source	=> "puppet:///modules/openmrs/stopOpenMRS.bat",
 	} ->  
 
+	windows::shortcut { $shutdown_openmrs_lnk:
+	  target      => $stop_OpenMRS_bat,
+	  working_directory	=> "${pih_openmrs_home}", 
+	  description => "${label_shutdown_openmrs}",
+	} ->	
+
 	file { $start_OpenMRS_bat: 
 		ensure  => present,
 		provider => windows, 	
 		content	=> template('openmrs/startOpenMRS.bat.erb'),	
 	} -> 
+	
+	windows::shortcut { $start_openmrs_lnk:
+	  target      => $start_OpenMRS_bat,
+	  working_directory	=> "${pih_openmrs_home}", 
+	  description => "${label_start_openmrs}",
+	} ->		
 
 	file { $update_child_server_settings_sql: 
 		ensure  => present,
@@ -122,11 +150,23 @@ class openmrs {
 		provider => windows, 	
 		content	=> template('openmrs/prepare_child_server.bat.erb'),	
 	} ->
+
+	windows::shortcut { $prepare_child_server_lnk:
+	  target      => $prepare_child_server_bat,
+	  working_directory	=> "${pih_openmrs_db}", 
+	  description => "${label_prepare_child_server}",
+	} ->
 	
 	file { $check_For_Unsynced_Records_bat: 
 		ensure  => present,
 		provider => windows, 	
 		content	=> template('openmrs/checkForUnsyncedRecords.bat.erb'),	
+	} ->
+
+	windows::shortcut { $check_for_unsynced_records_lnk:
+	  target      => $check_For_Unsynced_Records_bat,
+	  working_directory	=> "${pih_openmrs_db}", 
+	  description => "${label_check_for_unsynced_records}",
 	} ->
 	
 	file { $remove_changeloglock_bat: 
@@ -135,18 +175,36 @@ class openmrs {
 		content	=> template('openmrs/remove_changeloglock.bat.erb'),	
 	} ->
 
+	windows::shortcut { $remove_changeloglock_lnk:
+	  target      => $remove_changeloglock_bat,
+	  working_directory	=> "${pih_openmrs_db}", 
+	  description => "${label_remove_changelock}",
+	} ->
+
 	file { $remove_unsynced_changes_bat: 
 		ensure  => present,
 		provider => windows, 	
 		content	=> template('openmrs/remove_unsynced_changes.bat.erb'),	
 	} ->
 	
+	windows::shortcut { $remove_unsynced_changes_lnk:
+	  target      => $remove_unsynced_changes_bat,
+	  working_directory	=> "${pih_openmrs_db}", 
+	  description => "${label_unsynced_changes}",
+	} ->
+
 	file { $register_Child_With_Parent_bat: 
 		ensure  => present,
 		provider => windows, 	
 		content	=> template('openmrs/registerChildWithParent.bat.erb'),	
 	} ->	
-	
+
+	windows::shortcut { $register_child_with_parent_lnk:
+	  target      => $register_Child_With_Parent_bat,
+	  working_directory	=> "${pih_openmrs_db}", 
+	  description => "${label_register_child_with_parent}",
+	} ->
+		
 	file { $pih_openmrs_war:
 		ensure  => file,
 		source	=> "puppet:///modules/openmrs/openmrs.war",		
