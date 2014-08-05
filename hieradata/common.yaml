@@ -7,7 +7,7 @@ sync_parent_user_name: '[SYNC_USER_NAME]'
 sync_parent_user_password: '[SYNC_USER_PASSWORD]'
 sync_admin_email: [SYNC_ADMN_EMAIL]
 pih_home: 'c:\pih'
-puppet_install_home: 'c:\malawi_child_puppet'
+puppet_install_home: 'c:\malawi-child-puppet'
 win_startup_menu: 'c:\ProgramData\Microsoft\Windows\Start Menu\Programs'
 mysql_root_user: root
 mysql_root_password: [MYSQL_ROOT_PASSWORD]
