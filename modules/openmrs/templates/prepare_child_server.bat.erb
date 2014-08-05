@@ -40,7 +40,7 @@ rem sanity checks for local uncommitted sync_records =========================
 set count=0
 for /f "usebackq delims=" %%a in (sync_record.dump) do set /a count+=1
 del sync_record.dump
-if %count% LSS 2 goto :CONNECT_TO_PARENT_MYSQL
+if %count% LSS 2 goto :CONNECT_TO_PARENT_SSH_SERVER
 echo Unsynchronized changes in child server available >> %LOGFILE%
 echo ERROR checking clean child server. 
 echo Local, unsynchronized changes are present on this child server.
@@ -53,7 +53,8 @@ pause
 exit 1
 
 echo Connect to the parent server
-:CONNECT_TO_PARENT_MYSQL
+:CONNECT_TO_PARENT_SSH_SERVER
+echo y | %CONNECT_TO_SERVER% exit
 echo y | %CONNECT_TO_SERVER% "ls -al"
 if "%ERRORLEVEL%" == "0" GOTO CONNECT_TO_PARENT_MYSQL 
 echo Error Connecting to the parent server 
