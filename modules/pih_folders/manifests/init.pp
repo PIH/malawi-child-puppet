@@ -2,7 +2,7 @@ class pih_folders {
 	
 	$label_reset_openmrs = "Reset OpenMRS"
 	$reset_openmrs_lnk = "${openmrs_startup_menu}\\Reset OpenMRS.lnk"
-	$install_bat = "${pih_home}\\install.bat"
+	$install_bat = "${puppet_install_home}\\install.bat"
 
 	file { $pih_home:
 		ensure  => directory,
@@ -26,7 +26,7 @@ class pih_folders {
 
 	windows::shortcut { $reset_openmrs_lnk:
 	  target      => $install_bat,
-	  working_directory	=> "${pih_home}", 
+	  working_directory	=> "${puppet_install_home}", 
 	  description => "${label_reset_openmrs}",
 	} 
 	
