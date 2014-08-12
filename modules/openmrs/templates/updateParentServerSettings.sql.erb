@@ -43,3 +43,5 @@ select class_id from sync_class where name = 'org.openmrs.module.reporting' into
 insert into sync_server_class(class_id, server_id, send_to, receive_from) 
 select * from (select @org_openmrs_module_reporting_class_id, @child_server_id, 1, 0) as tmp 
 where not exists (select server_class_id from sync_server_class where class_id = @org_openmrs_module_reporting_class_id and server_id = @child_server_id);
+
+DROP TABLE IF EXISTS `<%= @child_name %>_sync_temp_uuid`;
