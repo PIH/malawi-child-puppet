@@ -16,13 +16,13 @@ class pih_mysql {
 	file { $pih_mysql_home:
 		ensure  => directory,
 		require => File[$pih_home],
-	}
+	} ->
 	
 	file { $pih_mysql_zip:
 		ensure  => file,
 		source	=> "puppet:///modules/pih_mysql/${mysql_zip}",		
 		require => File[$pih_mysql_home],
-	}
+	} ->
 	
 	windows::unzip { $pih_mysql_zip:
 		destination => $pih_mysql_home,
@@ -46,6 +46,7 @@ class pih_mysql {
 		onlyif		=> "cmd.exe /c sc query mysql",
 		unless		=> "cmd.exe /c sc query mysql | find \"STOPPED\"",
 		logoutput	=> true, 
+		returns		=> [0, 1, 2],
 	} -> 
 	
 	exec { 'remove_mysql': 
