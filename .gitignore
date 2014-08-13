@@ -1,3 +1,8 @@
 *.msi
 *.zip
 *.war
+bin
+hieradata/lisungwi-common.yaml
+hieradata/neno-common.yaml
+modules/gzip/subinacl.exe
+modules/gzip/tail.exe
