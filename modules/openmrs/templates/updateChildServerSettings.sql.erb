@@ -7,9 +7,12 @@ select property_value from global_property where property='sync.server_uuid' int
 select @child_server_uuid;
 
 insert into sync_server(nickname, address, server_type, username, password, uuid, disabled) 
-values('<%= @sync_parent_name %>', '<%= @sync_parent_address %>', 'PARENT', '<%= @sync_parent_user_name %>', '<%= @sync_parent_user_password %>', '<%= @sync_parent_uuid %>', 0);
+select * from (select '<%= @sync_parent_name %>', '<%= @sync_parent_address %>', 'PARENT', '<%= @sync_parent_user_name %>', '<%= @sync_parent_user_password %>', '<%= @sync_parent_uuid %>', 0) as tmp 
+where not exists (select server_id from sync_server where nickname='<%= @sync_parent_name %>') LIMIT 1;
 
-select last_insert_id() into @parent_server_id;
+update sync_server set address='<%= @sync_parent_address %>', server_type='PARENT', username='<%= @sync_parent_user_name %>', password='<%= @sync_parent_user_password %>', uuid='<%= @sync_parent_uuid %>', disabled=0 where nickname='<%= @sync_parent_name %>';
+
+select server_id from sync_server where nickname='<%= @sync_parent_name %>' into @parent_server_id;
 select @parent_server_id;
 
 -- add the default sync classes not to send/export
