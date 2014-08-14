@@ -105,6 +105,7 @@ pause
 exit 1
 
 :RECREATE_LOCAL_DB
+net stop Tomcat6
 rem drop and recreate local DB ===========================================================
 echo Step 5/10: Drop and re-create local DB
 %MYSQL_EXE% %LOCAL_DB_CREDENTIALS% < %DROP_AND_CREATE_DB_SCRIPT%
