@@ -1,2 +1,5 @@
 net start Tomcat6
+rem wait 300 seconds for Tomcat to start
+ping -w 1000 -n 300 127.0.0.1
+
 <%= @tail_exe %> -f <%= @pih_openmrs_home %>\openmrs.log
