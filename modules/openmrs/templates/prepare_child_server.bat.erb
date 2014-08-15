@@ -145,8 +145,8 @@ rem start Tomcat openmrs web app
 echo Step 8/10: Start Tomcat openmrs web app
 net start Tomcat6
 
-rem wait 300 seconds for Tomcat to start
-ping -w 1000 -n 300 127.0.0.1
+echo wait 300 seconds for OpenMRS to start
+ping -w 1000 -n 300 127.0.0.1 1>NUL
 
 rem delete temp text file in which we store the child server uuid
 del /F /Q %SERVER_UUID_TEXT_FILE%
