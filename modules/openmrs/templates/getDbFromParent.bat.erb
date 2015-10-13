@@ -128,7 +128,7 @@ exit 1
 rem download openmrs modules from the parent ===========================================================
 echo Step x/10: Delete sync tables
 del /F /Q %LOCAL_OPENMRS_MODULES%\*
-%PSCP_EXE% %SSH_CREDENTIALS%:/home/tomcat6/.OpenMRS/modules/* %LOCAL_OPENMRS_MODULES%
+%PSCP_EXE% %SSH_CREDENTIALS%:/home/emradmin/modules/* %LOCAL_OPENMRS_MODULES%
 if "%ERRORLEVEL%" == "0" GOTO START_TOMCAT 
 echo Failed to download  openmrs modules from parent
 
