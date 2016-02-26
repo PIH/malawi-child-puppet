@@ -53,6 +53,7 @@ exit 1
 
 echo Connect to the parent server
 :CONNECT_TO_PARENT_SSH_SERVER
+echo "%CONNECT_TO_SERVER%"
 echo y | %CONNECT_TO_SERVER% exit
 echo y | %CONNECT_TO_SERVER% "ls -al"
 if "%ERRORLEVEL%" == "0" GOTO CONNECT_TO_PARENT_MYSQL 
