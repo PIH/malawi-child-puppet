@@ -1,1 +1,1 @@
-msiexec /qn /i bin\puppet-3.6.2.msi /l*v bin\puppet_install.txt
+msiexec /qn /i bin\misc\puppet-3.6.2.msi /l*v bin\misc\puppet_install.txt
