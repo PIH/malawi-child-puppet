@@ -48,6 +48,8 @@ class openmrs {
 
 	file { $pih_openmrs_modules:
 		ensure  => directory,
+		source	=> "puppet:///modules/openmrs/modules",		
+		recurse => true,
 	} ->
 	
 	file { $openmrs_create_db_sql: 
