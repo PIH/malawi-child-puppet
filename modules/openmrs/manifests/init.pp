@@ -31,13 +31,6 @@ class openmrs {
 	$openmrs_db_user = hiera('openmrs_db_user')
 	$openmrs_db_password = hiera('openmrs_db_password')	
 	
-	$parent_mysql_db_password = hiera('parent_mysql_db_password')
-	$ssh_parent_address = hiera('ssh_parent_address')
-	$ssh_user = hiera('ssh_user')
-	$ssh_port = hiera('ssh_port')
-	$ssh_key = "${pih_putty_home}\\id_rsa"
-	$plink_exe = "${pih_putty_home}\\PLINK.EXE"
-	$pscp_exe = "${pih_putty_home}\\PSCP.EXE"
 	$gzip_exe = "${pih_gzip_home}\\bin\\gzip"
 	
 	$pih_openmrs_modules_zip = "${pih_home_bin}\\openmrs-modules.zip"
