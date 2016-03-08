@@ -14,7 +14,7 @@ class openmrs {
 	$pih_openmrs_db_bat = "${pih_openmrs_db}dropAndCreateDb.sql"
 	$pih_openmrs_db_file_linux = regsubst($pih_openmrs_db_file, '[\\]', '/', G) 
 	
-	$openmrs_create_db_sql = "${pih_openmrs_db}dropAndCreateDb.sql"
+	$openmrs_create_db_sql = "${pih_openmrs_db}dropAndCreateDb.bat"
 	
 	$stop_OpenMRS_bat = "${pih_openmrs_home}stopOpenMRS.bat"
 	$start_OpenMRS_bat = "${pih_openmrs_home}startOpenMRS.bat"
@@ -22,6 +22,8 @@ class openmrs {
 	$shutdown_openmrs_lnk = "${openmrs_startup_menu}\\Shutdown OpenMRS.lnk"
 	$label_start_openmrs = hiera('label_start_openmrs')
 	$start_openmrs_lnk = "${openmrs_startup_menu}\\Start OpenMRS.lnk"
+
+	$dropAndCreateDb_bat = "${pih_openmrs_home}dropAndCreateDb.bat"
 	
 	$mysql_root_user = hiera('mysql_root_user')
 	$mysql_root_password = hiera('mysql_root_password')
@@ -99,6 +101,22 @@ class openmrs {
 	windows::environment { 'OPENMRS_RUNTIME_PROPERTIES_FILE': 
 		value	=>	$pih_openmrs_runtime_properties,
 		notify	=> Class['windows::refresh_environment'],
+	} ->
+
+	file { $dropAndCreateDb_bat: 
+		ensure  => present,
+		provider => windows, 	
+		content	=> template('openmrs/dropAndCreateDb.bat.erb'),	
+	} ->
+
+	exec { 'execute_dropAndCreateDb_bat': 
+		path		=> $::path,
+		cwd			=> "${pih_openmrs_db}", 
+		provider	=> windows, 
+		timeout		=> 0, 
+		command		=> "cmd.exe /c ${dropAndCreateDb_bat}",
+		logoutput	=> true,
+		
 	}
 
 }
