@@ -49,7 +49,6 @@ echo 1. Synchronize through OpenMRS Child server
 echo 2. Run prepare_child_server again
 echo.
 echo Exiting now
-pause
 exit 1
 
 echo Connect to the parent server
@@ -58,15 +57,14 @@ echo y | %CONNECT_TO_SERVER% exit
 echo y | %CONNECT_TO_SERVER% "ls -al"
 if "%ERRORLEVEL%" == "0" GOTO CONNECT_TO_PARENT_MYSQL 
 echo Error Connecting to the parent server 
-pause
 exit 1
 
 :CONNECT_TO_PARENT_MYSQL
 echo Show databases on the remote server
+echo %CONNECT_TO_SERVER% "%REMOTE_DB_CONNECTION% -e 'show databases;' "
 %CONNECT_TO_SERVER% "%REMOTE_DB_CONNECTION% -e 'show databases;' "
 if "%ERRORLEVEL%" == "0" GOTO CLEAR_PARENT_SYNC_RECORDS 
 echo Error Connecting to the parent MYSQL Server 
-pause
 exit 1
 
 :CLEAR_PARENT_SYNC_RECORDS
@@ -83,16 +81,15 @@ echo Step 2/10: Dump parent db on parent server
 %CONNECT_TO_SERVER% "mysqldump %REMOTE_DB_CREDENTIALS% -q -e --single-transaction | gzip > /tmp/parent-dump.sql.gz "
 if "%ERRORLEVEL%" == "0" GOTO DOWNLOAD_DB_FROM_PARENT 
 echo Error dumping parent db
-pause
 exit 1
 
 :DOWNLOAD_DB_FROM_PARENT
 rem Copy db from parent server ===========================================================
 echo Step 3/10: Copy db from parent server
+echo %PSCP_EXE% %SSH_CREDENTIALS%:/tmp/parent-dump.sql.gz .
 %PSCP_EXE% %SSH_CREDENTIALS%:/tmp/parent-dump.sql.gz .
 if "%ERRORLEVEL%" == "0" GOTO UNZIP_PARENT_DB 
 echo Error downloading parent db
-pause
 exit 1
 
 :UNZIP_PARENT_DB
@@ -101,17 +98,14 @@ echo Step 4/10: Unzip parent DB
 %GZIP_EXE% -f -d parent-dump.sql.gz
 if "%ERRORLEVEL%" == "0" GOTO RECREATE_LOCAL_DB 
 echo Error unzipping parent db
-pause
 exit 1
 
 :RECREATE_LOCAL_DB
-net stop Tomcat6
 rem drop and recreate local DB ===========================================================
 echo Step 5/10: Drop and re-create local DB
 %MYSQL_EXE% %LOCAL_DB_CREDENTIALS% < %DROP_AND_CREATE_DB_SCRIPT%
 if "%ERRORLEVEL%" == "0" GOTO SOURCE_LOCAL_DB 
 echo Error dropping and recreating local db
-pause
 exit 1
 
 :SOURCE_LOCAL_DB
@@ -119,8 +113,7 @@ rem import parent db into the local server =====================================
 echo Step 6/10: Import parent DB
 %MYSQL_EXE% %LOCAL_DB_CREDENTIALS% %OPENMRS_DB% < parent-dump.sql
 if "%ERRORLEVEL%" == "0" GOTO DELETE_LOCAL_SYNC_TABLES 
-echo Error importing local db 
-pause
+echo Error importing local db
 exit 1
 
 :DELETE_LOCAL_SYNC_TABLES
@@ -128,15 +121,14 @@ rem delete sync tables =========================================================
 echo Step 7/10: Delete sync tables
 %MYSQL_EXE% %LOCAL_DB_CREDENTIALS% %OPENMRS_DB% < %DELETE_SYNC_TABLES_DB_SCRIPT% 
 if "%ERRORLEVEL%" == "0" GOTO DOWNLOAD_OPENMRS_MODULES 
-echo Error importing local db 
-pause
+echo Error importing local db
 exit 1
 
 :DOWNLOAD_OPENMRS_MODULES
 rem download openmrs modules from the parent ===========================================================
 echo Step x/10: Delete sync tables
 del /F /Q %LOCAL_OPENMRS_MODULES%\*
-%PSCP_EXE% %SSH_CREDENTIALS%:/home/emradmin/modules/* %LOCAL_OPENMRS_MODULES%
+%PSCP_EXE% %SSH_CREDENTIALS%:/home/tomcat6/.OpenMRS/modules/* %LOCAL_OPENMRS_MODULES%
 if "%ERRORLEVEL%" == "0" GOTO START_TOMCAT 
 echo Failed to download  openmrs modules from parent
 
@@ -145,7 +137,7 @@ rem start Tomcat openmrs web app
 echo Step 8/10: Start Tomcat openmrs web app
 net start Tomcat6
 
-echo wait 300 seconds for OpenMRS to start
+echo wait 300 seconds for Tomcat to start
 ping -w 1000 -n 300 127.0.0.1 1>NUL
 
 rem delete temp text file in which we store the child server uuid
@@ -163,7 +155,6 @@ echo Step x/10: Upload child server UUID text file to the parent server
 %PSCP_EXE% -i %SSH_KEY% -P %SSH_PORT% %SERVER_UUID_TEXT_FILE% %SSH_USER%@%PARENT_SERVER%:/tmp/
 if "%ERRORLEVEL%" == "0" GOTO CONFIGURE_PARENT_SETTINGS 
 echo Error uploading child server uuid text file to parent /tmp/ folder
-pause
 exit 0
 
 :CONFIGURE_PARENT_SETTINGS
@@ -172,7 +163,6 @@ echo Step 10/10: Configure sync parent server
 %CONNECT_TO_SERVER% "%REMOTE_DB_CONNECTION%" < %UPDATE_PARENT_SERVER_DB_SCRIPT%
 if "%ERRORLEVEL%" == "0" GOTO END 
 echo Error registering child server with the parent server
-pause
 exit 0
 
 :END
