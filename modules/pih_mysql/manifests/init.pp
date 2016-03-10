@@ -12,6 +12,9 @@ class pih_mysql {
 	
 	$pih_mysql_ini = "${pih_home}\\mysql\\my.ini"
 	$pih_mysql_data = "${pih_home}\\mysql\\data\\"
+	$pih_mysql_RootPassword = "${pih_home}\\mysql\\updateRootPassword.sql"
+	
+	$mysql_root_password = hiera('mysql_root_password')
 	
 	file { $pih_mysql_home:
 		ensure  => directory,
@@ -71,6 +74,20 @@ class pih_mysql {
 		cwd			=> "${pih_mysql_home}\\bin", 
 		provider	=> windows, 
 		command		=> "cmd.exe /c sc start mysql",
+		logoutput	=> true,
+	} ->
+	
+	file { $pih_mysql_RootPassword: 
+		ensure  => present,
+		provider => windows, 	
+		content	=> template('pih_mysql/updateRootPassword.sql.erb'),	
+	} ->
+	
+	exec { 'reset_mysql_root_password': 
+		path		=> $::path,
+		cwd			=> "${pih_mysql_home}\\", 
+		provider	=> windows, 
+		command		=> "cmd.exe /c mysql -u root -popenmrs mysql < $pih_mysql_RootPassword&&net stop mysql&&net start mysql",
 		logoutput	=> true,
 	}
 	

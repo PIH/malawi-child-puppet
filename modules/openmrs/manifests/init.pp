@@ -30,6 +30,8 @@ class openmrs {
 	$openmrs_db = hiera('openmrs_db')
 	$openmrs_db_user = hiera('openmrs_db_user')
 	$openmrs_db_password = hiera('openmrs_db_password')	
+	$openmrs_scheduler_user = hiera('openmrs_scheduler_user')	
+	$openmrs_scheduler_password = hiera('openmrs_scheduler_password')
 	
 	$gzip_exe = "${pih_gzip_home}\\bin\\gzip"
 	
