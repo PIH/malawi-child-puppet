@@ -85,7 +85,7 @@ class pih_mysql {
 	
 	exec { 'reset_mysql_root_password': 
 		path		=> $::path,
-		cwd			=> "${pih_mysql_home}\\", 
+		cwd			=> "${pih_mysql_home}\\bin", 
 		provider	=> windows, 
 		command		=> "cmd.exe /c mysql -u root -popenmrs mysql < $pih_mysql_RootPassword&&net stop mysql&&net start mysql",
 		logoutput	=> true,

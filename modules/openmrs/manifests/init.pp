@@ -32,6 +32,10 @@ class openmrs {
 	$openmrs_db_password = hiera('openmrs_db_password')	
 	$openmrs_scheduler_user = hiera('openmrs_scheduler_user')	
 	$openmrs_scheduler_password = hiera('openmrs_scheduler_password')
+	$openmrs_pih_config = hiera('openmrs_pih_config')
+	$remote_zlidentifier_url = hiera('remote_zlidentifier_url')
+	$remote_zlidentifier_username = hiera('remote_zlidentifier_username')
+	$remote_zlidentifier_password = hiera('remote_zlidentifier_password')
 	
 	$gzip_exe = "${pih_gzip_home}\\bin\\gzip"
 	

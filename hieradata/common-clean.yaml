@@ -12,6 +12,11 @@ openmrs_db_password: [OPENMRS_DB_PASSWORD]
 openmrs_scheduler_user: scheduler
 openmrs_scheduler_password: [OPENMRS_SCHEDULER_PASSWORD]
 
+openmrs_pih_config: haiti-mentalhealth
+remote_zlidentifier_url: [URL]
+remote_zlidentifier_username: [USER_NAME]
+remote_zlidentifier_password: [USER_PASSWORD]
+
 label_clean_tomcat: 'Clean Tomcat'
 label_check_for_unsynced_records: 'Check for Unsynced records'
 label_prepare_child_server: 'Prepare Child Server'
