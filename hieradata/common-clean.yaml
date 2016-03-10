@@ -9,6 +9,8 @@ mysql_root_password: [MYSQL_ROOT_PASSWORD]
 openmrs_db: openmrs
 openmrs_db_user: [OPENMRS_DB_USER]
 openmrs_db_password: [OPENMRS_DB_PASSWORD]
+openmrs_scheduler_user: scheduler
+openmrs_scheduler_password: [OPENMRS_SCHEDULER_PASSWORD]
 
 label_clean_tomcat: 'Clean Tomcat'
 label_check_for_unsynced_records: 'Check for Unsynced records'
