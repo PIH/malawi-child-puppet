@@ -10,5 +10,7 @@ hieradata/neno-common.yaml
 hieradata/parent-neno-common.yaml
 modules/gzip/subinacl.exe
 modules/gzip/tail.exe
+modules/openmrs/files/modules/*
+
 
 
