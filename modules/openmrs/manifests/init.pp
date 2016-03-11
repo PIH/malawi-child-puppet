@@ -41,6 +41,7 @@ class openmrs {
 	
 	$pih_openmrs_modules_zip = "${pih_home_bin}\\openmrs-modules.zip"
 	$pih_openmrs_war = "${pih_tomcat_home}\\webapps\\openmrs.war"
+	$openmrs_db_zip = "${pih_openmrs_db}openmrs.sql.zip"
 	$pih_openmrs_runtime_properties = "${pih_openmrs_home}openmrs-runtime.properties"
 			
 	file { $pih_openmrs_home:
@@ -56,6 +57,18 @@ class openmrs {
 		ensure  => directory,
 		source	=> "puppet:///modules/openmrs/modules",		
 		recurse => true,
+	} ->
+	
+	file { $openmrs_db_zip:
+		ensure  => file,
+		source	=> "puppet:///modules/openmrs/openmrs.sql.zip",		
+		recurse => true,
+	} ->
+	
+	windows::unzip { $openmrs_db_zip:
+		destination => $pih_openmrs_db,
+		creates	=> "${pih_openmrs_db}\\openmrs.sql",
+		require => File[$pih_openmrs_db],
 	} ->
 	
 	file { $openmrs_create_db_sql: 
@@ -118,6 +131,5 @@ class openmrs {
 		command		=> "cmd.exe /c ${dropAndCreateDb_bat}",
 		logoutput	=> true,
 		
-	}
-
+	} 
 }

@@ -87,8 +87,27 @@ class pih_mysql {
 		path		=> $::path,
 		cwd			=> "${pih_mysql_home}\\bin", 
 		provider	=> windows, 
-		command		=> "cmd.exe /c mysql -u root -popenmrs mysql < $pih_mysql_RootPassword&&net stop mysql&&net start mysql",
+		command		=> "cmd.exe /c mysql -u root -popenmrs mysql < $pih_mysql_RootPassword",
 		logoutput	=> true,
-	}
+	} ->
+	
+	exec { 'stop_mysql_server': 
+		path		=> $::path,
+		cwd			=> "${pih_mysql_home}\\bin", 
+		provider	=> windows, 
+		command		=> "cmd.exe /c net stop mysql",
+		onlyif		=> "cmd.exe /c sc query mysql",
+		unless		=> "cmd.exe /c sc query mysql | find \"STOPPED\"",
+		logoutput	=> true, 
+		returns		=> [0, 1, 2],
+	} -> 
+	
+	exec { 'start_mysql_server': 
+		path		=> $::path,
+		cwd			=> "${pih_mysql_home}\\bin", 
+		provider	=> windows, 
+		command		=> "cmd.exe /c sc start mysql",
+		logoutput	=> true,
+	} 
 	
 }
