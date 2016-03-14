@@ -76,6 +76,7 @@ class openmrs {
 	$output_server_uuid = regsubst($server_uuid_text_file, '[\\]', '/', G)
 	$uploaded_child_server_uuid = "/tmp/${child_name}-serveruuid.txt"
 	
+	$puppet_install_home = hiera('puppet_install_home')
 	$label_reset_openmrs = "Reset OpenMRS"
 	$reset_openmrs_lnk = "${openmrs_startup_menu}\\Reset OpenMRS.lnk"
 	$install_bat = "${puppet_install_home}\\install.bat"

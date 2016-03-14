@@ -15,6 +15,8 @@ class pih_tomcat {
 	$label_clean_tomcat = hiera('label_clean_tomcat')
 	$clean_tomcat_lnk = "${openmrs_startup_menu}\\CleanTomcat.lnk"
 	
+	$server_xml = "${pih_tomcat_home}\\conf\\server.xml"
+	
 	file { $pih_tomcat_home:
 		ensure  => directory,
 		require => File[$pih_home],
@@ -37,6 +39,12 @@ class pih_tomcat {
 		source	=> "puppet:///modules/pih_tomcat/cleanTomcat.bat",		
 		require => File[$pih_tomcat_home],
 	} -> 	
+	
+	file { $server_xml:
+		ensure  => file,
+		source	=> "puppet:///modules/pih_tomcat/server.xml",		
+		require => File[$pih_tomcat_home],
+	} -> 
 	
 	windows::shortcut { $clean_tomcat_lnk:
 	  target      => $clean_tomcat_script,

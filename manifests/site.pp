@@ -3,7 +3,6 @@ if $osfamily == 'windows' {
 }
 
 $pih_home = hiera('pih_home')
-$puppet_install_home = hiera('puppet_install_home')
 $pih_openmrs_home = "${pih_home}\\openmrs\\"
 $windows_openmrs_user = hiera('windows_openmrs_user')
 $pih_home_bin = "${pih_home}\\bin"
