@@ -12,6 +12,10 @@ openmrs_db_password: [OPENMRS_DB_PASSWORD]
 openmrs_scheduler_user: scheduler
 openmrs_scheduler_password: [OPENMRS_SCHEDULER_PASSWORD]
 
+ssh_parent_address: [UPDATE_SERVER_ADDRESS]
+ssh_user: [USER_NAME]
+ssh_port: [SSH_PORT]
+
 openmrs_pih_config: haiti-mentalhealth
 remote_zlidentifier_url: [URL]
 remote_zlidentifier_username: [USER_NAME]

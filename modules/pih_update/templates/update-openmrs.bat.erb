@@ -1,0 +1,37 @@
+@echo off
+
+echo.
+echo Update OpenMRS software
+
+set PIH_HOME=<%= @pih_home %>
+set PIH_UPDATE_HOME=<%= @pih_update_home %>
+set PIH_TOMCAT_HOME=<%= @pih_tomcat_home %>
+set PIH_OPENMRS_HOME=<%= @pih_openmrs_home %>
+set SSH_KEY=<%= @ssh_key %>
+set PSCP_EXE=<%= @pscp_exe %>
+set PARENT_SERVER=<%= @ssh_parent_address %>
+set SSH_USER=<%= @ssh_user %>
+set SSH_PORT=<%= @ssh_port %>
+set SSH_CREDENTIALS=-i %SSH_KEY% -P %SSH_PORT% %SSH_USER%@%PARENT_SERVER%
+
+:DOWNLOAD_LATEST_SOFTWARE
+rem download latest OpenMRS software ===========================================================
+echo Step 1/3: Download latest OpenMRS software
+%PSCP_EXE% -v -r %SSH_CREDENTIALS%:/home/%SSH_USER%/mental-health/deployment/* %PIH_UPDATE_HOME%\openmrs\
+if "%ERRORLEVEL%" == "0" GOTO UPDATE_OPENMRS
+echo Error downloading latest OpenMRS software
+pause
+exit 1
+
+:UPDATE_OPENMRS
+rem update OpenMRS web app ===========================================================
+echo Step 2/3: Update OpenMRS webapp
+cd %PIH_TOMCAT_HOME%\bin
+cmd.exe /c cleanTomcat.bat
+
+cd\
+copy %PIH_UPDATE_HOME%\openmrs\openmrs.war %PIH_TOMCAT_HOME%\webapps\ /y
+del /F /Q /S %PIH_OPENMRS_HOME%modules\*.*
+copy %PIH_UPDATE_HOME%\openmrs\modules\*.omod %PIH_OPENMRS_HOME%modules\
+
+net start tomcat6

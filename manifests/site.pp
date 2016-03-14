@@ -29,4 +29,5 @@ node default {
 	include pih_mysql
 	include putty
 	include openmrs
+	include pih_update
 }

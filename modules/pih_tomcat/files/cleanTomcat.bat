@@ -3,16 +3,13 @@
 echo.
 echo About to cleanup tomcat folder.
 echo.
-echo Press enter to continue.
-pause
-echo.
+
 
 rem stop openmrs =============================================================
-echo Step 1/7: Stopping OpenMRS localhost
+echo Stopping OpenMRS localhost
 set PWD=%CD%
 net stop Tomcat6
 cd /d %PWD%
-cls
 
 : fake messages to clear screen
 echo.
@@ -34,4 +31,3 @@ echo.
 echo Cleanup finished. You can now restart tomcat.
 echo.
 
-pause
