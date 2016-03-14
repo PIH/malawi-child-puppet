@@ -22,12 +22,6 @@ class pih_folders {
 	
 	file { $openmrs_startup_menu:
 		ensure  => directory,
-	} -> 
-
-	windows::shortcut { $reset_openmrs_lnk:
-	  target      => $install_bat,
-	  working_directory	=> "${puppet_install_home}", 
-	  description => "${label_reset_openmrs}",
 	} 
 	
 }

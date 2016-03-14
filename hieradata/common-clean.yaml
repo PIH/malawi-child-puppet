@@ -22,6 +22,7 @@ remote_zlidentifier_username: [USER_NAME]
 remote_zlidentifier_password: [USER_PASSWORD]
 
 label_clean_tomcat: 'Clean Tomcat'
+label_check_for_openmrs_updates: 'Check for OpenMRS updates'
 label_check_for_unsynced_records: 'Check for Unsynced records'
 label_prepare_child_server: 'Prepare Child Server'
 label_register_child_with_parent: 'Register Child With Parent'

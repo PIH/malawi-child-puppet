@@ -15,6 +15,8 @@ class pih_update {
 	$ssh_key = "${pih_putty_home}\\id_rsa"
 	$pscp_exe = "${pih_putty_home}\\PSCP.EXE"
 	
+	$label_check_for_openmrs_updates = hiera('label_check_for_openmrs_updates')
+	$check_for_openmrs_updates_lnk = "${openmrs_startup_menu}\\Check for OpenMRS updates.lnk"
 	
 	file { $pih_update_home:
 		ensure  => directory,
@@ -24,5 +26,11 @@ class pih_update {
 		ensure  => present,
 		provider => windows, 	
 		content	=> template('pih_update/update-openmrs.bat.erb'),	
+	} -> 
+	
+	windows::shortcut { $check_for_openmrs_updates_lnk:
+	  target      => $pih_openmrs_update_bat,
+	  working_directory	=> "${pih_update_home}", 
+	  description => "${label_check_for_openmrs_updates}",
 	} 
 }

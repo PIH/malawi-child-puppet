@@ -76,6 +76,10 @@ class openmrs {
 	$output_server_uuid = regsubst($server_uuid_text_file, '[\\]', '/', G)
 	$uploaded_child_server_uuid = "/tmp/${child_name}-serveruuid.txt"
 	
+	$label_reset_openmrs = "Reset OpenMRS"
+	$reset_openmrs_lnk = "${openmrs_startup_menu}\\Reset OpenMRS.lnk"
+	$install_bat = "${puppet_install_home}\\install.bat"
+	
 	notify{"The value of uploaded_child_server_uuid is ${uploaded_child_server_uuid}": }
 	
 	file { $pih_openmrs_home:
@@ -126,7 +130,13 @@ class openmrs {
 	  working_directory	=> "${pih_openmrs_home}", 
 	  description => "${label_start_openmrs}",
 	} ->		
-
+	
+	windows::shortcut { $reset_openmrs_lnk:
+	  target      => $install_bat,
+	  working_directory	=> "${puppet_install_home}", 
+	  description => "${label_reset_openmrs}",
+	} ->
+	
 	file { $update_child_server_settings_sql: 
 		ensure  => present,
 		provider => windows, 	
