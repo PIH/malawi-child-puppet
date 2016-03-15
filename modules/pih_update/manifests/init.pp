@@ -8,11 +8,18 @@ class pih_update {
 	require cwrsync
 	
 	$pih_update_home = "${pih_home}\\update\\"
+	$pih_update_home_openmrs= "${pih_update_home}openmrs"	
+	$array_tmp= split($pih_update_home_openmrs, '[:\\]')
+	$join_tmp = join($array_tmp,"/")
+	notify{"join_tmp= ${join_tmp}": }
+	$pih_update_home_openmrs_linux = "/cygdrive/${join_tmp}"
+	notify{"pih_update_home_openmrs_linux= ${pih_update_home_openmrs_linux}": }
 	$pih_openmrs_update_bat = "${pih_update_home}update-openmrs.bat"
 	
 	$ssh_parent_address = hiera('ssh_parent_address')
 	$ssh_user = hiera('ssh_user')
 	$ssh_port = hiera('ssh_port')
+	$release_repository = hiera('release_repository')
 	$ssh_key = "${pih_cwrsync_home}\\cwrsync"
 	$pscp_exe = "${pih_putty_home}\\PSCP.EXE"
 	
