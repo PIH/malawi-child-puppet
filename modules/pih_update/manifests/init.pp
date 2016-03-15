@@ -5,6 +5,7 @@ class pih_update {
 	require pih_mysql
 	require gzip 
 	require putty 
+	require cwrsync
 	
 	$pih_update_home = "${pih_home}\\update\\"
 	$pih_openmrs_update_bat = "${pih_update_home}update-openmrs.bat"
@@ -12,7 +13,7 @@ class pih_update {
 	$ssh_parent_address = hiera('ssh_parent_address')
 	$ssh_user = hiera('ssh_user')
 	$ssh_port = hiera('ssh_port')
-	$ssh_key = "${pih_putty_home}\\id_rsa"
+	$ssh_key = "${pih_cwrsync_home}\\cwrsync"
 	$pscp_exe = "${pih_putty_home}\\PSCP.EXE"
 	
 	$label_check_for_openmrs_updates = hiera('label_check_for_openmrs_updates')
