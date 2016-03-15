@@ -4,6 +4,7 @@ xcopy bin\tomcat\* modules\pih_tomcat\files\ /Y /I
 xcopy bin\mysql\* modules\pih_mysql\files\ /Y /I
 xcopy bin\putty\* modules\putty\files\ /Y /I
 xcopy bin\cwrsync\* modules\cwrsync\files\ /Y /I
+xcopy bin\backups\7za.exe modules\pih_backups\files\ /Y /I
 xcopy bin\openmrs\openmrs.sql.zip modules\openmrs\files\ /Y /I
 xcopy bin\openmrs\openmrs.war modules\openmrs\files\ /Y /I
 xcopy bin\openmrs\modules\*.omod modules\openmrs\files\modules\ /Y /I

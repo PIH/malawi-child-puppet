@@ -31,4 +31,5 @@ node default {
 	include cwrsync
 	include openmrs
 	include pih_update
+	include pih_backups
 }

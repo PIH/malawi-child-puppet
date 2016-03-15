@@ -7,13 +7,13 @@ class cwrsync {
 	file { $pih_cwrsync_home:
 		ensure  => directory,
 		require => File[$pih_home],
-	}
+	} ->
 	
 	file { $pih_cwrsync_zip:
 		ensure  => file,
 		source	=> "puppet:///modules/cwrsync/${cwrsync_zip}",		
 		require => File[$pih_cwrsync_home],
-	}
+	} ->
 	
 	windows::unzip { $pih_cwrsync_zip:
 		destination => $pih_cwrsync_home,
