@@ -35,6 +35,8 @@ echo %backuptime%
 
 :: SETTINGS AND PATHS 
 :: Note: Do not put spaces before the equal signs or variables will fail
+set MYSQL_HOME=<%= @pih_mysql_home %>
+set PIH_HOME_BIN=<%= @pih_home_bin %>
 
 :: Name of database
 set dbname=<%= @openmrs_db %>
@@ -46,19 +48,19 @@ set dbuser=<%= @openmrs_db_user %>
 set dbpass=<%= @openmrs_db_password %>
 
 :: Error log path - Important in debugging your issues
-set errorLogPath="c:\openmrs\mysql\dumperrors.txt"
+set errorLogPath="%MYSQL_HOME%\dumperrors.txt"
 
 :: MySQL EXE Path
-set mysqldumpexe="C:\openmrs\mysql\bin\mysqldump.exe"
+set mysqldumpexe="%MYSQL_HOME%\bin\mysqldump.exe"
 
 :: Backup directory
 set backupfldr=<%= @pih_backups_home %>
 
 :: Path to data folder which may differ from install dir
-set datafldr="C:\openmrs\mysql\data"
+set datafldr="%MYSQL_HOME%\data"
 
 :: Path to zip executable
-set zipper="c:\openmrs\bin\7za.exe"
+set zipper="%PIH_HOME_BIN%\7za.exe"
 
 :: Number of days to retain .zip backup files 
 set retaindays=7
@@ -80,11 +82,11 @@ pushd %datafldr%
 echo "Zipping the %dbname% database"
 
 :: .zip option clean but not as compressed
-%zipper% a -tzip "%backupfldr%FullBackup.%backuptime%.zip" "%backupfldr%*.sql"
+%zipper% a -tzip "%backupfldr%\FullBackup.%backuptime%.zip" "%backupfldr%\*.sql"
 
 echo "Deleting all the files ending in .sql only"
  
-del "%backupfldr%*.sql"
+del "%backupfldr%\*.sql"
 
 echo "Deleting zip files older than 30 days now"
 Forfiles -p %backupfldr% -s -m *.* -d -%retaindays% -c "cmd /c del /q @path"
