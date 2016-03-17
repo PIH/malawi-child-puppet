@@ -88,7 +88,10 @@ class pih_mysql {
 		cwd			=> "${pih_mysql_home}\\bin", 
 		provider	=> windows, 
 		command		=> "cmd.exe /c mysql -u root -popenmrs mysql < $pih_mysql_RootPassword",
+	    onlyif		=> "cmd.exe /c sc query mysql",
+		unless		=> "cmd.exe /c sc query mysql | find \"RUNNING\"",
 		logoutput	=> true,
+		returns		=> [0, 1, 2],
 	} ->
 	
 	exec { 'stop_mysql_server': 
