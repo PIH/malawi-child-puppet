@@ -17,6 +17,8 @@ class pih_backups {
 	
 	$label_schedule_openmrs_backups = "Schedule OpenMRS backups"
 	$schedule_openmrs_backups_lnk = "${openmrs_startup_menu}\\Schedule OpenMRS backups.lnk"
+	$label_backup_openmrs_now = "Backup OpenMRS now"
+	$backup_openmrs_now_lnk = "${openmrs_startup_menu}\\Backup OpenMRS now.lnk"
 	
 	file { $pih_backups_home:
 		ensure  => directory,
@@ -40,6 +42,12 @@ class pih_backups {
 		provider => windows, 	
 		content	=> template('pih_backups/schedule_mysql_backup.bat.erb'),	
 	} ->		
+	
+	windows::shortcut { $backup_openmrs_now_lnk:
+	  target      => $mysql_backup_bat_bin,
+	  working_directory	=> "${pih_home_bin}", 
+	  description => "${label_backup_openmrs_now}",
+	} ->
 	
 	windows::shortcut { $schedule_openmrs_backups_lnk:
 	  target      => $schedule_mysql_backup_bat_bin,
