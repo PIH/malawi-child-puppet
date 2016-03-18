@@ -1,4 +1,4 @@
-class openmrs {
+class openmrs-sync {
     
 	require pih_java
 	require pih_tomcat
@@ -99,13 +99,13 @@ class openmrs {
 	file { $openmrs_create_db_sql: 
 		ensure  => present,
 		provider => windows, 	
-		content	=> template('openmrs/dropAndCreateDb.sql.erb'),	
+		content	=> template('openmrs-sync/dropAndCreateDb.sql.erb'),	
 	} ->
 	
 	file { $delete_sync_tables_sql: 
 		ensure  => present,
 		provider => windows, 	
-		source	=> "puppet:///modules/openmrs/deleteSyncTables.sql",
+		source	=> "puppet:///modules/openmrs-sync/deleteSyncTables.sql",
 	} -> 
 
 	file { $stop_OpenMRS_bat: 
@@ -141,25 +141,25 @@ class openmrs {
 	file { $update_child_server_settings_sql: 
 		ensure  => present,
 		provider => windows, 	
-		content	=> template('openmrs/updateChildServerSettings.sql.erb'),	
+		content	=> template('openmrs-sync/updateChildServerSettings.sql.erb'),	
 	} ->
 	
 	file { $update_parent_server_settings_sql: 
 		ensure  => present,
 		provider => windows, 	
-		content	=> template('openmrs/updateParentServerSettings.sql.erb'),		
+		content	=> template('openmrs-sync/updateParentServerSettings.sql.erb'),		
 	} ->
 	
 	file { $get_db_from_parent_bat: 
 		ensure  => present,
 		provider => windows, 	
-		content	=> template('openmrs/getDbFromParent.bat.erb'),	
+		content	=> template('openmrs-sync/getDbFromParent.bat.erb'),	
 	} ->
 	
 	file { $prepare_child_server_bat: 
 		ensure  => present,
 		provider => windows, 	
-		content	=> template('openmrs/prepare_child_server.bat.erb'),	
+		content	=> template('openmrs-sync/prepare_child_server.bat.erb'),	
 	} ->
 
 	windows::shortcut { $prepare_child_server_lnk:
@@ -171,7 +171,7 @@ class openmrs {
 	file { $check_For_Unsynced_Records_bat: 
 		ensure  => present,
 		provider => windows, 	
-		content	=> template('openmrs/checkForUnsyncedRecords.bat.erb'),	
+		content	=> template('openmrs-sync/checkForUnsyncedRecords.bat.erb'),	
 	} ->
 
 	windows::shortcut { $check_for_unsynced_records_lnk:
@@ -183,7 +183,7 @@ class openmrs {
 	file { $remove_changeloglock_bat: 
 		ensure  => present,
 		provider => windows, 	
-		content	=> template('openmrs/remove_changeloglock.bat.erb'),	
+		content	=> template('openmrs-sync/remove_changeloglock.bat.erb'),	
 	} ->
 
 	windows::shortcut { $remove_changeloglock_lnk:
@@ -195,7 +195,7 @@ class openmrs {
 	file { $remove_unsynced_changes_bat: 
 		ensure  => present,
 		provider => windows, 	
-		content	=> template('openmrs/remove_unsynced_changes.bat.erb'),	
+		content	=> template('openmrs-sync/remove_unsynced_changes.bat.erb'),	
 	} ->
 	
 	windows::shortcut { $remove_unsynced_changes_lnk:
@@ -207,7 +207,7 @@ class openmrs {
 	file { $register_Child_With_Parent_bat: 
 		ensure  => present,
 		provider => windows, 	
-		content	=> template('openmrs/registerChildWithParent.bat.erb'),	
+		content	=> template('openmrs-sync/registerChildWithParent.bat.erb'),	
 	} ->	
 
 	windows::shortcut { $register_child_with_parent_lnk:
@@ -218,7 +218,7 @@ class openmrs {
 		
 	file { $pih_openmrs_war:
 		ensure  => file,
-		source	=> "puppet:///modules/openmrs/openmrs.war",		
+		source	=> "puppet:///modules/openmrs-sync/openmrs.war",		
 	} -> 
 	
 	file { $pih_openmrs_runtime_properties: 
