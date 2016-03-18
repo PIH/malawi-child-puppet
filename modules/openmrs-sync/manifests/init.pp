@@ -215,12 +215,7 @@ class openmrs-sync {
 	  working_directory	=> "${pih_openmrs_db}", 
 	  description => "${label_register_child_with_parent}",
 	} ->
-		
-	file { $pih_openmrs_war:
-		ensure  => file,
-		source	=> "puppet:///modules/openmrs-sync/openmrs.war",		
-	} -> 
-	
+			
 	file { $pih_openmrs_runtime_properties: 
 		ensure  => present,
 		provider => windows, 	

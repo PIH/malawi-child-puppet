@@ -33,6 +33,7 @@ set UPDATE_CHILD_SERVER_DB_SCRIPT=<%= @update_child_server_settings_sql %>
 set UPDATE_PARENT_SERVER_DB_SCRIPT=<%= @update_parent_server_settings_sql %>
 set SERVER_UUID_TEXT_FILE=<%= @server_uuid_text_file %>
 set LOCAL_OPENMRS_MODULES=<%= @pih_openmrs_modules %>
+set LOCAL_OPENMRS_WAR=<%= @pih_openmrs_war %>
 set LOGFILE=sync.log
 
 rem sanity checks for local uncommitted sync_records =========================
@@ -129,8 +130,16 @@ rem download openmrs modules from the parent ===================================
 echo Step x/10: Delete sync tables
 del /F /Q %LOCAL_OPENMRS_MODULES%\*
 %PSCP_EXE% %SSH_CREDENTIALS%:/home/%SSH_USER%/modules/* %LOCAL_OPENMRS_MODULES%
-if "%ERRORLEVEL%" == "0" GOTO START_TOMCAT 
+if "%ERRORLEVEL%" == "0" GOTO DOWNLOAD_OPENMRS_WAR 
 echo Failed to download  openmrs modules from parent
+
+:DOWNLOAD_OPENMRS_WAR
+rem download openmrs war from the parent ===========================================================
+echo Step x/10: Download openmrs war from the parent
+del /F /Q %LOCAL_OPENMRS_WAR%
+%PSCP_EXE% %SSH_CREDENTIALS%:/home/%SSH_USER%/webapps/openmrs.war %LOCAL_OPENMRS_WAR%
+if "%ERRORLEVEL%" == "0" GOTO START_TOMCAT 
+echo Failed to download  openmrs war from parent
 
 :START_TOMCAT
 rem start Tomcat openmrs web app
