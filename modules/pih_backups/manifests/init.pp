@@ -6,7 +6,7 @@ class pih_backups {
 	
 	$za_exe = '7za.exe'
 	$za_exe_bin = "${pih_home_bin}\\${za_exe}"
-	$mysql_backup_bat = 'mysqbackup.bat'
+	$mysql_backup_bat = 'mysqlbackup.bat'
 	$mysql_backup_bat_bin = "${pih_home_bin}\\${mysql_backup_bat}"
 	$schedule_mysql_backup_bat_bin = "${pih_home_bin}\\schedule_mysql_backup.bat"
 	$pih_backups_home = "${pih_home}\\backups"
