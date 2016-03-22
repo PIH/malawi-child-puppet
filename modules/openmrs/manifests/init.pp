@@ -14,8 +14,6 @@ class openmrs {
 	$pih_openmrs_db_bat = "${pih_openmrs_db}dropAndCreateDb.sql"
 	$pih_openmrs_db_file_linux = regsubst($pih_openmrs_db_file, '[\\]', '/', G) 
 	
-	$openmrs_create_db_sql = "${pih_openmrs_db}dropAndCreateDb.bat"
-	
 	$stop_OpenMRS_bat = "${pih_openmrs_home}stopOpenMRS.bat"
 	$start_OpenMRS_bat = "${pih_openmrs_home}startOpenMRS.bat"
 	$label_shutdown_openmrs = hiera('label_shutdown_openmrs')
@@ -23,6 +21,7 @@ class openmrs {
 	$label_start_openmrs = hiera('label_start_openmrs')
 	$start_openmrs_lnk = "${openmrs_startup_menu}\\Start OpenMRS.lnk"
 
+	$openmrs_create_db_sql = "${pih_openmrs_db}dropAndCreateDb.sql"
 	$dropAndCreateDb_bat = "${pih_openmrs_home}dropAndCreateDb.bat"
 	
 	$mysql_root_user = hiera('mysql_root_user')

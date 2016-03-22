@@ -13,6 +13,7 @@ class pih_mysql {
 	$pih_mysql_ini = "${pih_home}\\mysql\\my.ini"
 	$pih_mysql_data = "${pih_home}\\mysql\\data\\"
 	$pih_mysql_RootPassword = "${pih_home}\\mysql\\updateRootPassword.sql"
+	$pih_mysql_init_password = "${pih_home}\\mysql\\mysql-init.ini"
 	
 	$mysql_root_password = hiera('mysql_root_password')
 	
@@ -76,22 +77,17 @@ class pih_mysql {
 		command		=> "cmd.exe /c sc start mysql",
 		logoutput	=> true,
 	} ->
+
+	file { $pih_mysql_init_password: 
+		ensure  => present,
+		provider => windows, 	
+		content	=> template('pih_mysql/mysql-init.txt.erb'),	
+	} ->
 	
 	file { $pih_mysql_RootPassword: 
 		ensure  => present,
 		provider => windows, 	
 		content	=> template('pih_mysql/updateRootPassword.sql.erb'),	
-	} ->
-	
-	exec { 'reset_mysql_root_password': 
-		path		=> $::path,
-		cwd			=> "${pih_mysql_home}\\bin", 
-		provider	=> windows, 
-		command		=> "cmd.exe /c mysql -u root -popenmrs mysql < $pih_mysql_RootPassword",
-	    onlyif		=> "cmd.exe /c sc query mysql",
-		unless		=> "cmd.exe /c sc query mysql | find \"RUNNING\"",
-		logoutput	=> true,
-		returns		=> [0, 1, 2],
 	} ->
 	
 	exec { 'stop_mysql_server': 
@@ -104,6 +100,24 @@ class pih_mysql {
 		logoutput	=> true, 
 		returns		=> [0, 1, 2],
 	} -> 
+	
+	exec { 'reset_mysql_root_password': 
+		path		=> $::path,
+		cwd			=> "${pih_mysql_home}\\bin", 
+		provider	=> windows, 
+		command		=> "cmd.exe /c start /b mysqld.exe --console --init-file=${pih_mysql_init_password}",
+		logoutput	=> true,
+		returns		=> [0, 1, 2],
+	} ->
+	
+	exec { 'mysqladmin_stop': 
+		path		=> $::path,
+		cwd			=> "${pih_mysql_home}\\bin", 
+		provider	=> windows, 
+		command		=> "cmd.exe /c mysqladmin.exe -u root -p${mysql_root_password} shutdown",
+		logoutput	=> true,
+		returns		=> [0, 1, 2],
+	} ->
 	
 	exec { 'start_mysql_server': 
 		path		=> $::path,
