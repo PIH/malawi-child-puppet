@@ -50,6 +50,9 @@ class openmrs {
 	
 	file { $pih_openmrs_db:
 		ensure  => directory,
+		purge   => true,
+		force   => true,
+		recurse => true,
 	} ->
 
 	file { $pih_openmrs_modules:
