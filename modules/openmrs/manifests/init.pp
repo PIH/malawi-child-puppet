@@ -1,5 +1,6 @@
 class openmrs {
     
+	require pih_folders
 	require pih_java
 	require pih_tomcat
 	require pih_mysql
@@ -20,6 +21,11 @@ class openmrs {
 	$shutdown_openmrs_lnk = "${openmrs_startup_menu}\\Shutdown OpenMRS.lnk"
 	$label_start_openmrs = hiera('label_start_openmrs')
 	$start_openmrs_lnk = "${openmrs_startup_menu}\\Start OpenMRS.lnk"
+	
+	$pih_icon = $pih_folders::pih_icon
+	$desktop_shortcut_url = hiera('desktop_shortcut_url')
+	$windows_openmrs_user = hiera('windows_openmrs_user')
+	$openmrs_desktop_url = "C:\\Users\\${windows_openmrs_user}\\Desktop\\${desktop_shortcut_url}"
 
 	$openmrs_create_db_sql = "${pih_openmrs_db}dropAndCreateDb.sql"
 	$dropAndCreateDb_bat = "${pih_openmrs_home}dropAndCreateDb.bat"
@@ -144,5 +150,11 @@ class openmrs {
 		timeout		=> 0, 
 		command		=> "cmd.exe /c del /F /Q ${dropAndCreateDb_bat}",
 		logoutput	=> true,
+	} ->
+	
+	file { $openmrs_desktop_url: 
+		ensure  => present,	
+		content	=> template('openmrs/openmrs_desktop_shortcut.URL.erb'),	
 	}
+
 }
