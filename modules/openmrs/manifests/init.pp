@@ -55,6 +55,8 @@ class openmrs {
 	file { $pih_openmrs_modules:
 		ensure  => directory,
 		source	=> "puppet:///modules/openmrs/modules",		
+		purge   => true,
+		force   => true,
 		recurse => true,
 	} ->
 	
@@ -62,6 +64,7 @@ class openmrs {
 		ensure  => file,
 		source	=> "puppet:///modules/openmrs/openmrs.sql.zip",		
 		recurse => true,
+		replace => true,
 	} ->
 	
 	windows::unzip { $openmrs_db_zip:
