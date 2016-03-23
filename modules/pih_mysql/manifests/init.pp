@@ -84,12 +84,6 @@ class pih_mysql {
 		content	=> template('pih_mysql/mysql-init.txt.erb'),	
 	} ->
 	
-	file { $pih_mysql_RootPassword: 
-		ensure  => present,
-		provider => windows, 	
-		content	=> template('pih_mysql/updateRootPassword.sql.erb'),	
-	} ->
-	
 	exec { 'stop_mysql_server': 
 		path		=> $::path,
 		cwd			=> "${pih_mysql_home}\\bin", 
@@ -114,7 +108,7 @@ class pih_mysql {
 		path		=> $::path,
 		cwd			=> "${pih_mysql_home}\\bin", 
 		provider	=> windows, 
-		command		=> "cmd.exe /c mysqladmin.exe -u root -p${mysql_root_password} shutdown",
+		command		=> "cmd.exe /c mysqladmin.exe -u root -p${mysql_root_password} shutdown&&ping -w 1000 -n 5 127.0.0.1",
 		logoutput	=> true,
 		returns		=> [0, 1, 2],
 	} ->
@@ -125,6 +119,16 @@ class pih_mysql {
 		provider	=> windows, 
 		command		=> "cmd.exe /c sc start mysql",
 		logoutput	=> true,
-	} 
+		returns		=> [0, 1, 2],
+	} ->
+	
+	exec { 'remove_mysql_init_password': 
+		path		=> $::path,
+		cwd			=> "${pih_mysql_home}", 
+		provider	=> windows, 
+		timeout		=> 0, 
+		command		=> "cmd.exe /c del /F /Q ${pih_mysql_init_password}",
+		logoutput	=> true,
+	}
 	
 }

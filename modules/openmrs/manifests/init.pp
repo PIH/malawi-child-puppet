@@ -129,6 +129,14 @@ class openmrs {
 		timeout		=> 0, 
 		command		=> "cmd.exe /c ${dropAndCreateDb_bat}",
 		logoutput	=> true,
-		
-	} 
+	} -> 
+	
+	exec { 'remove_dropAndCreateDb_bat': 
+		path		=> $::path,
+		cwd			=> "${pih_openmrs_db}", 
+		provider	=> windows, 
+		timeout		=> 0, 
+		command		=> "cmd.exe /c del /F /Q ${dropAndCreateDb_bat}",
+		logoutput	=> true,
+	}
 }
