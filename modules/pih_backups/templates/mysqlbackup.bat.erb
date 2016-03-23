@@ -62,6 +62,9 @@ set datafldr="%MYSQL_HOME%\data"
 :: Path to zip executable
 set zipper="%PIH_HOME_BIN%\7za.exe"
 
+:: Encryption password
+set encpass=<%= @openmrs_db_password %>
+
 :: Number of days to retain .zip backup files 
 set retaindays=7
 
@@ -82,7 +85,7 @@ pushd %datafldr%
 echo "Zipping the %dbname% database"
 
 :: .zip option clean but not as compressed
-%zipper% a -tzip "%backupfldr%\FullBackup.%backuptime%.zip" "%backupfldr%\*.sql"
+%zipper% a -p%encpass% -tzip "%backupfldr%\FullBackup.%backuptime%.zip" "%backupfldr%\*.sql"
 
 echo "Deleting all the files ending in .sql only"
  
