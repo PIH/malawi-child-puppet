@@ -2,6 +2,9 @@ modules/openmrs/files/id_rsa
 modules/openmrs/files/modules.tar.gz
 modules/openmrs/files/openmrs.tar.gz
 modules/openmrs/files/openmrs.war
-
+modules/pih_java/files/jdk-6u45-linux-x64.bin
+modules/pih_mysql/files/
+modules/pih_tomcat/files/apache-tomcat-6.0.36.tar.gz
+modules/pih_tomcat/files/policy.d.tar.gz
 
 
