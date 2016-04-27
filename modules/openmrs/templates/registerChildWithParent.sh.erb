@@ -1,0 +1,109 @@
+#!/bin/bash
+
+echo
+echo "Connect to the parent server and retrieve the db"
+echo <%= @child_name %>
+echo "Set connection variables"
+
+##################################################
+PARENT_SERVER=<%= @ssh_parent_address %>
+SSH_USER=<%= @ssh_user %>
+SSH_KEY=<%= @ssh_key %>
+SSH_PORT=<%= @ssh_port %>
+SSH_CREDENTIALS="-i $SSH_KEY $SSH_USER@$PARENT_SERVER -p $SSH_PORT"
+SCP_CREDENTIALS="-P $SSH_PORT -i $SSH_KEY" 
+CONNECT_TO_SERVER="ssh $SSH_CREDENTIALS"
+
+##################################################
+echo "Db connection properties"
+##################################################
+MYSQL_EXE=<%= @mysql_exe %>
+REMOTE_OPENMRS_DB_USER=<%= @parent_mysql_root_user %>
+REMOTE_OPENMRS_DB_PASSWORD=<%= @parent_mysql_db_password %>
+LOCAL_OPENMRS_DB_USER=<%= @mysql_root_user %>
+LOCAL_OPENMRS_DB_PASSWORD=<%= @mysql_root_password %>
+OPENMRS_DB=<%= @openmrs_db %>
+OPENMRS_DB_REMOTE=<%= @openmrs_db_remote %>
+REMOTE_DB_CREDENTIALS="-u $REMOTE_OPENMRS_DB_USER -p$REMOTE_OPENMRS_DB_PASSWORD $OPENMRS_DB_REMOTE"
+LOCAL_DB_CREDENTIALS="-u $LOCAL_OPENMRS_DB_USER -p$LOCAL_OPENMRS_DB_PASSWORD"
+REMOTE_DB_CONNECTION="mysql $REMOTE_DB_CREDENTIALS"
+DROP_AND_CREATE_DB_SCRIPT=<%= @openmrs_drop_create_db_sql %>
+DELETE_SYNC_TABLES_DB_SCRIPT=<%= @delete_sync_tables_sql %>
+UPDATE_CHILD_SERVER_DB_SCRIPT=<%= @update_child_server_settings_sql %>
+UPDATE_PARENT_SERVER_DB_SCRIPT=<%= @update_parent_server_settings_sql %>
+SERVER_UUID_TEXT_FILE=<%= @server_uuid_text_file %>
+LOCAL_OPENMRS_MODULES=<%= @pih_openmrs_modules %>
+LOCAL_OPENMRS_WAR=<%= @pih_openmrs_war %>
+LOGFILE=sync.log
+SUDOLOGFILE=sudo.log
+TOMCAT_STOP="sudo /etc/init.d/tomcat6 stop"
+TOMCAT_START="sudo /etc/init.d/tomcat6 start"
+
+# Check connections
+echo Connect to the parent server
+$CONNECT_TO_SERVER exit
+$CONNECT_TO_SERVER "ls -al" > /dev/null
+if [ $? -ne 0 ] 
+then
+echo Error Connecting to the parent server 
+exit 1
+fi
+
+#CONNECT_TO_PARENT_MYSQL
+echo Check database connections on the remote server
+$CONNECT_TO_SERVER "$REMOTE_DB_CONNECTION -e 'show databases;'" > /dev/null
+if [ $? -ne 0 ] 
+then
+echo Error Connecting to the parent MYSQL Server 
+exit 1
+fi
+
+#START_TOMCAT
+echo **********... Start Tomcat openmrs web app
+$TOMCAT_START
+
+#counter=`grep "Server startup" $CATALINA_LOG | wc -l | awk '{print $1'}`
+echo Waiting for Tomcat to start
+#while [ $counter -eq 0 ]
+#	do
+# 	sleep 2s
+#	counter=`grep "Server startup" $CATALINA_LOG | wc -l | awk '{print $1'}`
+#done
+sleep 360s
+
+if [ -f "$SERVER_UUID_TEXT_FILE" ]
+then
+	echo Temporary UUID file exists, removing...
+	sudo rm $SERVER_UUID_TEXT_FILE
+fi
+
+#CONFIGURE_CHILD_SETTINGS
+echo ***********.. Configure sync child server
+$MYSQL_EXE $LOCAL_DB_CREDENTIALS $OPENMRS_DB < $UPDATE_CHILD_SERVER_DB_SCRIPT
+if [ $? -ne 0 ] 
+then
+echo Error configuring child server
+exit 1
+fi
+
+#UPLOAD_CHILD_SERVER_UUID
+echo ************. Upload child server UUID text file to the parent server
+scp $SCP_CREDENTIALS $SERVER_UUID_TEXT_FILE $SSH_USER@$PARENT_SERVER:/tmp/
+if [ $? -ne 0 ] 
+then
+echo Error uploading child server uuid text file to parent /tmp/ folder
+exit 1
+fi
+
+#CONFIGURE_PARENT_SETTINGS
+echo ************* Configure sync parent server
+$CONNECT_TO_SERVER "$REMOTE_DB_CONNECTION" < $UPDATE_PARENT_SERVER_DB_SCRIPT
+if [ $? -ne 0 ] 
+then
+echo Error uploading child server uuid text file to parent /tmp/ folder
+exit 1
+fi
+
+echo Cleaning up...
+rm $SERVER_UUID_TEXT_FILE
+

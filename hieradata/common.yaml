@@ -1,28 +1,52 @@
 sitename: common
-windows_openmrs_user: openmrs
-sync_parent_name: parent-lisungwi-reporting
-sync_parent_address: 'https://172.16.1.4/openmrs'
-sync_parent_uuid: 'SYNC_PARENT_UUID'
-sync_parent_user_name: '[SYNC_USER_NAME]'
-sync_parent_user_password: '[SYNC_USER_PASSWORD]'
-sync_admin_email: [SYNC_ADMN_EMAIL]
-pih_home: 'c:\pih'
-puppet_install_home: 'c:\malawi-child-puppet'
-win_startup_menu: 'c:\ProgramData\Microsoft\Windows\Start Menu\Programs'
+
+## Setup
+services_enable: true
+## Java
+java_memory_parameters: '-Xmx512m -Xms512m -XX:PermSize=256m -XX:MaxPermSize=256m -XX:NewSize=128m'
+java_debug_parameters: ''
+java_profiler: ''
+## default tomcat installation
+tomcat: tomcat6
+tomcat_home: '/usr/share/tomcat6'
+tomcat_port: 8080
+tomcat_ssl_port: 8443
+tomcat_shutdown_port: 8005
+tomcat_ajp_port: 8009
+## run another tomcat instance on a different port
+# tomcat: tomcat6b
+# tomcat_home: '/usr/share/tomcat6b'
+# tomcat_port: 8081
+# tomcat_ssl_port: 8441
+# tomcat_shutdown_port: 8016
+# tomcat_ajp_port: 8019
+## MySQL 
+mysql_sys_user_group: mysql
+mysql_sys_user_name: mysql
 mysql_root_user: root
-mysql_root_password: [MYSQL_ROOT_PASSWORD]
-openmrs_db: openmrs
-openmrs_db_user: [OPENMRS_DB_USER]
-openmrs_db_password: [OPENMRS_DB_PASSWORD]
-ssh_parent_address: 172.16.1.4
-parent_mysql_db_password: [PARENT_MYSQL_PASSWORD]
-ssh_user: [SSH_USER]
-ssh_port: 22
-label_clean_tomcat: 'Clean Tomcat'
-label_check_for_unsynced_records: 'Check for Unsynced records'
-label_prepare_child_server: 'Prepare Child Server'
-label_register_child_with_parent: 'Register Child With Parent'
-label_remove_changelock: 'Remove Changelock'
-label_unsynced_changes: 'Remove Unsynced Changes'
-label_shutdown_openmrs: 'Shutdown OpenMRS'
-label_start_openmrs: 'Start OpenMRS'
+
+## SSH 
+ssh_parent_address: 
+ssh_user: 
+ssh_port: 
+
+child_name: 
+openmrs_user: 
+openmrs_db: 
+openmrs_db_user: 
+openmrs_db_password: 
+mysql_root_user: 
+mysql_root_password: 
+
+openmrs_db_remote: 
+openmrs_auto_update_database: 
+parent_mysql_root_user: 
+parent_mysql_db_password: 
+
+sync_parent_uuid: 
+sync_parent_user_name: 
+sync_parent_user_password: 
+sync_parent_name: 
+sync_parent_address: 
+sync_admin_email: 
+

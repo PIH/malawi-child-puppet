@@ -1,0 +1,77 @@
+#!/bin/bash
+
+echo 
+echo Interface for OpenMRS Actions
+echo
+echo Select an option number from the list below:
+echo 
+echo User
+echo 	1. Start Tomcat
+echo 	2. Stop Tomcat
+echo 	3. Prepare Child Server
+echo 
+echo Admin
+echo 	4. Register Child With Parent
+echo 	5. Check for Unsynced Records
+echo 	6. Remove Changeloglock
+echo 	7. Remove Unsynced Changes
+echo
+echo Enter Option: 
+read OPT
+
+if [ $OPT -gt 0 ] 
+	then
+	echo Are you sure? Type Y/N to continue:
+	read TOKEN
+	if [ $TOKEN == "y" ] 
+		then
+		echo Continuing...
+	else
+		echo Aborting... 
+		exit 0
+	fi
+fi
+
+if [ $OPT -eq 1 ] 
+	then
+	echo Starting Tomcat
+	sudo /etc/init.d/tomcat6 start
+	tail -f /var/lib/tomcat6/logs/catalina.out
+elif [ $OPT -eq 2 ]
+	then
+	echo Stopping Tomcat
+	sudo /etc/init.d/tomcat6 stop
+elif [ $OPT -eq 3 ]
+	then
+	echo Preparing Child Server
+	sudo <%= @prepare_child_server_sh %>
+elif [ $OPT -eq 4 ]
+	then
+	echo Registering Child with Parent Server
+	sudo <%= @register_child_with_parent_sh %>
+elif [ $OPT -eq 5 ]
+	then
+	echo Checking for Unsynced Changes
+	bash <%= @check_For_Unsynced_Records_sh %>
+elif [ $OPT -eq 6 ]
+	then
+	echo Removing Changeloglock
+	bash <%= @remove_changeloglock_sh %>
+elif [ $OPT -eq 7 ]
+	then		
+	echo Removing Unsynced Changes
+	bash <%= @remove_unsynced_changes_sh %>
+else
+	echo This is not a valid option.	
+fi
+
+echo 
+echo 
+echo Any key to exit 
+echo 
+echo
+read A
+
+
+
+
