@@ -29,6 +29,8 @@ Prepping the Flash Drive
 Installing from the Flash Drive
 -------------------------------
 
+Prerequiste--Internet connectiviy will be required, in particular for steps #7 & #8
+
 1) Log on as the local admin account (e.g. PIH Windows user)
 
 2)Copy from the USB the entire mental-health folder to c:\
