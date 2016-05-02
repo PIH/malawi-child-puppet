@@ -71,6 +71,7 @@ class openmrs (
     owner   => $tomcat,
     group   => $tomcat,
     mode    => '0755',
+    recurse => inf,
     require => User[$tomcat]
   } ->
 
