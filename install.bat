@@ -3,6 +3,7 @@ xcopy bin\java\* modules\pih_java\files\ /Y /I
 xcopy bin\tomcat\* modules\pih_tomcat\files\ /Y /I
 xcopy bin\mysql\* modules\pih_mysql\files\ /Y /I
 xcopy bin\putty\* modules\putty\files\ /Y /I
+xcopy bin\gzip\* modules\gzip\files\ /Y /I
 xcopy bin\cwrsync\* modules\cwrsync\files\ /Y /I
 xcopy bin\backups\7za.exe modules\pih_backups\files\ /Y /I
 del /F /Q modules\openmrs\files\openmrs.sql.zip
