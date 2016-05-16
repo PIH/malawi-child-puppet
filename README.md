@@ -32,6 +32,8 @@ Installing from the Flash Drive
 
 Prerequiste--Internet connectiviy will be required, in particular for steps #6 & #7
 
+0) Close all applications and reboot the machine
+
 1) Log on as the local admin account (e.g. PIH Windows user)
 
 2) Copy from the USB the entire mental-health folder to c:\
