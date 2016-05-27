@@ -61,7 +61,7 @@ class openmrs (
   $openmrs_manager_sh = "${openmrs_bin_folder}/openmrsManager.sh"
 
   $icon_openmrs_manager = "/usr/share/applications/openmrsManager.desktop"
-  $icon_openmrs_manager_desktop = "/home/openmrs/Desktop/openmrsManager.desktop"
+  $icon_openmrs_manager_desktop = "/home/${openmrs_user}/Desktop/openmrsManager.desktop"
 
   notify{"tomcat_base= ${tomcat_base}": }
   notify{"tomcat= ${tomcat}": }
