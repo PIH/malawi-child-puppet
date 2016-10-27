@@ -15,8 +15,8 @@ Prepping the Flash Drive
 
 1) Checkout master branch of this module and copy to a flash drive in a new top-level directory /mental-health
 
-2) SFTP to amigo.pih-emr.org and download "/home/backups/binaries/mental-health/hieradata/common.yawl"
-    Copy this common.yawl over to the flash drive, replacing the default one in hieradata/common.yawl
+2) SFTP to amigo.pih-emr.org and download "/home/backups/binaries/mental-health/hieradata/common.yaml"
+    Copy this common.yawl over to the flash drive, replacing the default one in hieradata/common.yaml
 
 3) Also from amigo.pih-emr.org download "/home/backups/binaries/mental-health/bin/*" (you can fetch an entire directory structure using sftp using "get -r", or you may want to zip up the entire bin directory first)
     Create a new directory on the flash drive, "/mental-health/bin" and copy over the contents of the directory downloaded in the previous step
