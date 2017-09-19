@@ -33,6 +33,7 @@ set UPDATE_CHILD_SERVER_DB_SCRIPT=<%= @update_child_server_settings_sql %>
 set UPDATE_PARENT_SERVER_DB_SCRIPT=<%= @update_parent_server_settings_sql %>
 set SERVER_UUID_TEXT_FILE=<%= @server_uuid_text_file %>
 set LOCAL_OPENMRS_MODULES=<%= @pih_openmrs_modules %>
+set LOCAL_OPENMRS_WAR=<%= @pih_openmrs_war %>
 set LOGFILE=sync.log
 
 rem sanity checks for local uncommitted sync_records =========================
@@ -125,18 +126,25 @@ exit 1
 
 :DELETE_LOCAL_SYNC_TABLES
 rem delete sync tables ===========================================================
-echo Step 7/10: Delete sync tables
+echo Step 7/10: Import/Source parent database
 %MYSQL_EXE% %LOCAL_DB_CREDENTIALS% %OPENMRS_DB% < %DELETE_SYNC_TABLES_DB_SCRIPT% 
-if "%ERRORLEVEL%" == "0" GOTO DOWNLOAD_OPENMRS_MODULES 
+if "%ERRORLEVEL%" == "0" GOTO DOWNLOAD_OPENMRS_WAR
 echo Error importing local db 
 pause
 exit 1
 
+:DOWNLOAD_OPENMRS_WAR
+rem download openmrs war from the parent ===========================================================
+echo Step x/10: Download openmrs.war from parent
+%PSCP_EXE% %SSH_CREDENTIALS%:/home/%SSH_USER%/webapps/openmrs.war %LOCAL_OPENMRS_WAR%
+if "%ERRORLEVEL%" == "0" GOTO DOWNLOAD_OPENMRS_MODULES
+echo Failed to download  openmrs war from parent
+
 :DOWNLOAD_OPENMRS_MODULES
 rem download openmrs modules from the parent ===========================================================
-echo Step x/10: Delete sync tables
+echo Step x/10: Delete openmrs modules from parent
 del /F /Q %LOCAL_OPENMRS_MODULES%\*
-%PSCP_EXE% %SSH_CREDENTIALS%:/home/tomcat6/.OpenMRS/modules/* %LOCAL_OPENMRS_MODULES%
+%PSCP_EXE% %SSH_CREDENTIALS%:/home/%SSH_USER%/modules/* %LOCAL_OPENMRS_MODULES%
 if "%ERRORLEVEL%" == "0" GOTO START_TOMCAT 
 echo Failed to download  openmrs modules from parent
 
