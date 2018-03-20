@@ -12,18 +12,26 @@ Installing a PIH-EMR Mental Health Instance
 
 Prepping the Flash Drive
 ------------------------
+\* Install [Git for Windows](https://git-scm.com/download/win)\* and [Notepad++](https://notepad-plus-plus.org/) 
 
 1) Checkout master branch of this module and copy to a flash drive in a new top-level directory /mental-health
+
+> Open Git Bash 
+
+> cd /c/ 
+
+> git clone https://github.com/PIH/malawi-child-puppet.git mental-health
+
 
 2) SFTP to amigo.pih-emr.org and download "/home/backups/binaries/mental-health/hieradata/common.yaml"
     Copy this common.yaml over to the flash drive, replacing the default one in hieradata/common.yaml
 
-scp USER_NAME@amigo.pih-emr.org://home/backups/binaries/mental-health/hieradata/common.yaml .
+> scp USER_NAME@amigo.pih-emr.org://home/backups/binaries/mental-health/hieradata/common.yaml .
 
 3) Also from amigo.pih-emr.org download "/home/backups/binaries/mental-health/bin/*" (you can fetch an entire directory structure using sftp using "get -r", or you may want to zip up the entire bin directory first)
     Create a new directory on the flash drive, "/mental-health/bin" and copy over the contents of the directory downloaded in the previous step
   
-  scp -r USER_NAME@amigo.pih-emr.org://home/backups/binaries/mental-health/bin .
+> scp -r USER_NAME@amigo.pih-emr.org://home/backups/binaries/mental-health/bin .
 
 4) Copy the MH "gold" version of OpenMRS core and modules you wish to install into "/mental-health/bin/openmrs" and "/mental-health/bin/openmrs/modules" replacing the existing war and omods
     NOTE: do **not** replace the base sql file (openmrs.sql.zip) found in the /mental-health/bin/openmrs directory (which you downloaded in step #3)
