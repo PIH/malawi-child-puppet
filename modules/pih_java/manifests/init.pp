@@ -1,11 +1,8 @@
 class pih_java {
     
+	require pih_folders
 	
-	if $architecture == 'x64' { 
-		$jdk_zip = 'jdk_6u45_x64.zip'
-	} else {
-		$jdk_zip = 'jdk_6u45.zip'
-	}
+	$jdk_zip = 'jdk_7u80_x64.zip'	
 	$pih_java_zip = "${pih_home_bin}\\${jdk_zip}"
 	
 	file { $pih_java_home:

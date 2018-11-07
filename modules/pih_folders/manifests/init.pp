@@ -16,6 +16,14 @@ class pih_folders {
 		recurse => true,
 	} -> 
 	
+	exec { 'remove_pih_java_folder': 
+		path		=> $::path,
+		provider	=> windows, 
+		command		=> "cmd.exe /c rd /S /Q ${pih_java_home}",
+		onlyif		=> "cmd.exe /c dir ${pih_java_home}",
+		logoutput	=> true,
+	} -> 
+	
 	file { $pih_icon:
 		ensure  => file,
 		source	=> "puppet:///modules/pih_folders/PIH_favicon_50px.ico",		
