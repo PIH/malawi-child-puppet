@@ -3,11 +3,7 @@ class pih_tomcat {
 	require pih_java 
 	require gzip
 	
-	if $architecture == 'x64' { 
-		$tomcat_zip = 'tomcat-6.0.32-x64.zip'
-	} else {
-		$tomcat_zip = 'tomcat-6.0.32.zip'
-	}
+	$tomcat_zip = 'tomcat-7.0.62-x64.zip'
 	
 	$pih_tomcat_zip = "${pih_home_bin}\\${tomcat_zip}"
 	$pih_install_tomcat = "${pih_tomcat_home}\\bin\\install_tomcat.bat"
@@ -16,6 +12,14 @@ class pih_tomcat {
 	$clean_tomcat_lnk = "${openmrs_startup_menu}\\CleanTomcat.lnk"
 	
 	$server_xml = "${pih_tomcat_home}\\conf\\server.xml"
+	
+	exec { 'remove_pih_tomcat_folder': 
+		path		=> $::path,
+		provider	=> windows, 
+		command		=> "cmd.exe /c rd /S /Q ${pih_tomcat_home}",
+		onlyif		=> "cmd.exe /c dir ${pih_tomcat_home}",
+		logoutput	=> true,
+	} -> 
 	
 	file { $pih_tomcat_home:
 		ensure  => directory,
@@ -78,7 +82,7 @@ class pih_tomcat {
 		path		=> $::path,
 		cwd			=> "${pih_tomcat_home}\\bin", 
 		provider	=> windows, 
-		command		=> "cmd.exe /c set JAVA_HOME=${pih_java_home}&&tomcat6 //US//Tomcat6 --JvmMx 512 ++JvmOptions=\"-XX:MaxPermSize=256m\"",
+		command		=> "cmd.exe /c set JAVA_HOME=${pih_java_home}&&tomcat7 //US//Tomcat7 --JvmMx 512 ++JvmOptions=\"-XX:MaxPermSize=256m\"",
 		logoutput	=> true,
 	} ->
 	
@@ -86,7 +90,7 @@ class pih_tomcat {
 		path		=> $::path,
 		cwd			=> "${pih_home_bin}", 
 		provider	=> windows, 
-		command		=> "cmd.exe /c ${subinacl_exe} /SERVICE Tomcat6 /GRANT=${windows_openmrs_user}=F",
+		command		=> "cmd.exe /c ${subinacl_exe} /SERVICE Tomcat7 /GRANT=${windows_openmrs_user}=F",
 		logoutput	=> true,
 		timeout		=> 0, 
 	} ->	

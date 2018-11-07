@@ -43,7 +43,7 @@ cd\
 copy %PIH_UPDATE_HOME%\openmrs\openmrs.war %PIH_TOMCAT_HOME%\webapps\ /y
 del /F /Q /S %PIH_OPENMRS_HOME%modules\*.*
 copy %PIH_UPDATE_HOME%\openmrs\modules\*.omod %PIH_OPENMRS_HOME%modules\
-net start tomcat6
+net start tomcat7
 echo Press CTRL-C to exit
 echo wait 30 seconds for Tomcat to start
 ping -w 1000 -n 30 127.0.0.1

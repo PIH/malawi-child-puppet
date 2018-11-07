@@ -1,2 +1,2 @@
-net stop Tomcat6
+net stop Tomcat7
 pause

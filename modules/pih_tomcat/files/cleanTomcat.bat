@@ -8,7 +8,7 @@ echo.
 rem stop openmrs =============================================================
 echo Stopping OpenMRS localhost
 set PWD=%CD%
-net stop Tomcat6
+net stop Tomcat7
 cd /d %PWD%
 
 : fake messages to clear screen

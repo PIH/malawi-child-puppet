@@ -106,7 +106,7 @@ pause
 exit 1
 
 :RECREATE_LOCAL_DB
-net stop Tomcat6
+net stop Tomcat7
 rem drop and recreate local DB ===========================================================
 echo Step 5/10: Drop and re-create local DB
 %MYSQL_EXE% %LOCAL_DB_CREDENTIALS% < %DROP_AND_CREATE_DB_SCRIPT%
@@ -151,7 +151,7 @@ echo Failed to download  openmrs modules from parent
 :START_TOMCAT
 rem start Tomcat openmrs web app
 echo Step 8/10: Start Tomcat openmrs web app
-net start Tomcat6
+net start Tomcat7
 
 rem wait 300 seconds for Tomcat to start
 ping -w 1000 -n 300 127.0.0.1
