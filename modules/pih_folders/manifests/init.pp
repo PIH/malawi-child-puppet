@@ -16,6 +16,45 @@ class pih_folders {
 		recurse => true,
 	} -> 
 	
+	exec { 'stop_tomcat6': 
+		path		=> $::path,
+		cwd			=> "${pih_tomcat_home}\\bin", 
+		provider	=> windows, 
+		command		=> "cmd.exe /c net stop Tomcat6",
+		onlyif		=> "cmd.exe /c sc query Tomcat6",
+		unless		=> "cmd.exe /c sc query Tomcat6 | find \"STOPPED\"",
+		logoutput	=> true, 
+		returns		=> [0, 1, 2],
+	} -> 
+
+    exec { 'stop_tomcat7': 
+		path		=> $::path,
+		cwd			=> "${pih_tomcat_home}\\bin", 
+		provider	=> windows, 
+		command		=> "cmd.exe /c net stop Tomcat7",
+		onlyif		=> "cmd.exe /c sc query Tomcat7",
+		unless		=> "cmd.exe /c sc query Tomcat7 | find \"STOPPED\"",
+		logoutput	=> true, 
+		returns		=> [0, 1, 2],
+	} -> 
+
+    exec { 'uninstall_tomcat': 
+		path		=> $::path,
+		cwd			=> "${pih_tomcat_home}\\bin", 
+		provider	=> windows, 
+		command		=> "cmd.exe /c set JAVA_HOME=${pih_java_home}&&service.bat remove",
+		onlyif		=> "cmd.exe /c dir ${pih_tomcat_home}",
+		logoutput	=> true,
+	} -> 
+
+	exec { 'remove_pih_tomcat_folder': 
+		path		=> $::path,
+		provider	=> windows, 
+		command		=> "cmd.exe /c rd /S /Q ${pih_tomcat_home}",
+		onlyif		=> "cmd.exe /c dir ${pih_tomcat_home}",
+		logoutput	=> true,
+	} -> 
+
 	exec { 'remove_pih_java_folder': 
 		path		=> $::path,
 		provider	=> windows, 

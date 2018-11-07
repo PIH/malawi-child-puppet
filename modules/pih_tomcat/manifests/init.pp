@@ -13,13 +13,6 @@ class pih_tomcat {
 	
 	$server_xml = "${pih_tomcat_home}\\conf\\server.xml"
 	
-	exec { 'remove_pih_tomcat_folder': 
-		path		=> $::path,
-		provider	=> windows, 
-		command		=> "cmd.exe /c rd /S /Q ${pih_tomcat_home}",
-		onlyif		=> "cmd.exe /c dir ${pih_tomcat_home}",
-		logoutput	=> true,
-	} -> 
 	
 	file { $pih_tomcat_home:
 		ensure  => directory,
