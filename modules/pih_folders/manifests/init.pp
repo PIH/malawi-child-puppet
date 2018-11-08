@@ -43,7 +43,7 @@ class pih_folders {
 		cwd			=> "${pih_tomcat_home}\\bin", 
 		provider	=> windows, 
 		command		=> "cmd.exe /c set JAVA_HOME=${pih_java_home}&&service.bat remove",
-		onlyif		=> "cmd.exe /c dir ${pih_tomcat_home}",
+		onlyif		=> "cmd.exe /c dir ${pih_tomcat_home}\\bin",
 		logoutput	=> true,
 	} -> 
 
