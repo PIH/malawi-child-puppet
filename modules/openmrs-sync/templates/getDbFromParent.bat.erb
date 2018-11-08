@@ -127,7 +127,7 @@ exit 1
 
 :DOWNLOAD_OPENMRS_MODULES
 rem download openmrs modules from the parent ===========================================================
-echo Step x/10: Delete sync tables
+echo Step 8/10: Delete sync tables
 del /F /Q %LOCAL_OPENMRS_MODULES%\*
 %PSCP_EXE% %SSH_CREDENTIALS%:/home/%SSH_USER%/modules/* %LOCAL_OPENMRS_MODULES%
 if "%ERRORLEVEL%" == "0" GOTO DOWNLOAD_OPENMRS_WAR 
@@ -135,7 +135,8 @@ echo Failed to download  openmrs modules from parent
 
 :DOWNLOAD_OPENMRS_WAR
 rem download openmrs war from the parent ===========================================================
-echo Step x/10: Download openmrs war from the parent
+echo Step 9/10: Download openmrs war from the parent
+echo First, attempt to delete existing war file:
 del /F /Q %LOCAL_OPENMRS_WAR%
 %PSCP_EXE% %SSH_CREDENTIALS%:/home/%SSH_USER%/webapps/openmrs.war %LOCAL_OPENMRS_WAR%
 if "%ERRORLEVEL%" == "0" GOTO START_TOMCAT 
@@ -143,7 +144,7 @@ echo Failed to download  openmrs war from parent
 
 :START_TOMCAT
 rem start Tomcat openmrs web app
-echo Step 8/10: Start Tomcat openmrs web app
+echo Step 10/10: Start Tomcat openmrs web app
 net start Tomcat7
 
 echo wait 300 seconds for Tomcat to start
