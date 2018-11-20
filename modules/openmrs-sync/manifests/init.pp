@@ -62,6 +62,7 @@ class openmrs-sync {
 	
 	$pih_openmrs_modules_zip = "${pih_home_bin}\\openmrs-modules.zip"
 	$pih_openmrs_war = "${pih_tomcat_home}\\webapps\\openmrs.war"
+	$pih_openmrs_workflow = "${pih_tomcat_home}\\webapps\\workflow\\"
 	$pih_openmrs_runtime_properties = "${pih_openmrs_home}openmrs-runtime.properties"
 	
 	$child_name = $hostname

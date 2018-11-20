@@ -33,6 +33,7 @@ set UPDATE_CHILD_SERVER_DB_SCRIPT=<%= @update_child_server_settings_sql %>
 set UPDATE_PARENT_SERVER_DB_SCRIPT=<%= @update_parent_server_settings_sql %>
 set SERVER_UUID_TEXT_FILE=<%= @server_uuid_text_file %>
 set LOCAL_OPENMRS_MODULES=<%= @pih_openmrs_modules %>
+set LOCAL_OPENMRS_WORKFLOW=<%= @pih_openmrs_workflow %>
 set LOCAL_OPENMRS_WAR=<%= @pih_openmrs_war %>
 set LOGFILE=sync.log
 
@@ -139,12 +140,22 @@ echo Step 9/10: Download openmrs war from the parent
 echo First, attempt to delete existing war file:
 del /F /Q %LOCAL_OPENMRS_WAR%
 %PSCP_EXE% %SSH_CREDENTIALS%:/home/%SSH_USER%/webapps/openmrs.war %LOCAL_OPENMRS_WAR%
-if "%ERRORLEVEL%" == "0" GOTO START_TOMCAT 
+if "%ERRORLEVEL%" == "0" GOTO DOWNLOAD_WORKFLOW_APP 
 echo Failed to download  openmrs war from parent
+
+:DOWNLOAD_WORKFLOW_APP
+rem download workflow app from the parent ===========================================================
+echo Step 10: Download openmrs war from the parent
+echo First, attempt to delete existing workflow app:
+rmdir /S /Q %LOCAL_OPENMRS_WORKFLOW%
+mkdir %LOCAL_OPENMRS_WORKFLOW%
+%PSCP_EXE% -r %SSH_CREDENTIALS%:/home/%SSH_USER%/webapps/workflow/* %LOCAL_OPENMRS_WORKFLOW%
+if "%ERRORLEVEL%" == "0" GOTO START_TOMCAT 
+echo Failed to download  workflow from parent
 
 :START_TOMCAT
 rem start Tomcat openmrs web app
-echo Step 10/10: Start Tomcat openmrs web app
+echo Step 11: Start Tomcat openmrs web app
 net start Tomcat7
 
 echo wait 300 seconds for Tomcat to start
