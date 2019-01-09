@@ -13,6 +13,7 @@ $pih_mysql_home = "${pih_home}\\mysql"
 $pih_putty_home = "${pih_home}\\putty"
 $pih_gzip_home = "${pih_home}\\gzip"
 $tail_exe = "${pih_home_bin}\\tail.exe"
+$wget_exe = "${pih_home_bin}\\wget.exe"
 $subinacl_exe = "${pih_home_bin}\\subinacl.exe"
 $win_startup_menu = hiera('win_startup_menu')
 $openmrs_startup_menu = "${win_startup_menu}\\OpenMRS" 

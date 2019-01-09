@@ -16,6 +16,13 @@ class gzip {
 		require => File[$pih_home_bin],
 	} 
 	
+	file { $wget_exe: 
+		ensure  => present,
+		provider => windows, 	
+		source	=> "puppet:///modules/gzip/wget.exe",
+		require => File[$pih_home_bin],
+	}
+	
 	file { $subinacl_exe: 
 		ensure  => present,
 		provider => windows, 	

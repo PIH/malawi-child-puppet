@@ -25,6 +25,10 @@ class openmrs-sync {
 	
 	$stop_OpenMRS_bat = "${pih_openmrs_home}stopOpenMRS.bat"
 	$start_OpenMRS_bat = "${pih_openmrs_home}startOpenMRS.bat"
+	$refresh_ic3_app_bat = "${pih_openmrs_home}refreshIC3App.bat"
+	$label_refresh_ic3 = hiera('label_refresh_ic3_screening_app')
+    $refresh_ic3_lnk = "${openmrs_startup_menu}\\Refresh IC3 App.lnk"
+  
 	$label_shutdown_openmrs = hiera('label_shutdown_openmrs')
 	$shutdown_openmrs_lnk = "${openmrs_startup_menu}\\Shutdown OpenMRS.lnk"
 	$label_start_openmrs = hiera('label_start_openmrs')
@@ -131,7 +135,19 @@ class openmrs-sync {
 	  target      => $start_OpenMRS_bat,
 	  working_directory	=> "${pih_openmrs_home}", 
 	  description => "${label_start_openmrs}",
-	} ->		
+	} ->	
+
+	file { $refresh_ic3_app_bat: 
+		ensure  => present,
+		provider => windows, 	
+		content	=> template('openmrs-sync/refresh_ic3_app.bat.erb'),	
+	} -> 
+
+	windows::shortcut { $refresh_ic3_lnk:
+	  target      => $refresh_ic3_app_bat,
+	  working_directory	=> "${pih_openmrs_home}", 
+	  description => "${label_start_openmrs}",
+	} ->			
 	
 	windows::shortcut { $reset_openmrs_lnk:
 	  target      => $install_bat,
