@@ -2,13 +2,13 @@
 
 set PIH_HOME_BIN=<%= @pih_home_bin %>
 set PIH_TOMCAT_HOME=<%= @pih_tomcat_home %>
-set SERVER_URL=http://bamboo.pih-emr.org/artifacts/
-set WORKFLOW_APP=openmrs-pwa-apzu-ic3.tar.gz
+set ARTIFACTS_URL=<%= @artifacts_url %>
+set WORKFLOW_APP=<%= @ic3_app_artifact %>
 
 cd %PIH_HOME_BIN%
 del /f %WORKFLOW_APP%
 rd /S /Q workflow
-%PIH_HOME_BIN%\wget.exe %SERVER_URL%%WORKFLOW_APP% .
+%PIH_HOME_BIN%\wget.exe %ARTIFACTS_URL%%WORKFLOW_APP% .
 tar -xf %WORKFLOW_APP%
 rmdir %PIH_TOMCAT_HOME%\webapps\workflow /S /Q
 mkdir %PIH_TOMCAT_HOME%\webapps\workflow
