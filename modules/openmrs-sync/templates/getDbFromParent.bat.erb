@@ -17,6 +17,7 @@ set CONNECT_TO_SERVER=%PLINK_EXE% %SSH_CREDENTIALS%
 rem ====================================================================================
 echo Set Db connection properties
 rem ====================================================================================
+set DOWNLOAD_DB=<%= @download_db %>
 set MYSQL_EXE=<%= @mysql_exe %>
 set REMOTE_OPENMRS_DB_USER=<%= @mysql_root_user %>
 set REMOTE_OPENMRS_DB_PASSWORD=<%= @parent_mysql_db_password %>
@@ -37,21 +38,25 @@ set LOCAL_OPENMRS_WORKFLOW=<%= @pih_openmrs_workflow %>
 set LOCAL_OPENMRS_WAR=<%= @pih_openmrs_war %>
 set LOGFILE=sync.log
 
-rem sanity checks for local uncommitted sync_records =========================
-%MYSQL_EXE% %LOCAL_DB_CREDENTIALS% %OPENMRS_DB%  -e "select record_id from sync_record where state <> 'COMMITTED' and state <> 'NOT_SUPPOSED_TO_SYNC';" > sync_record.dump
-set count=0
-for /f "usebackq delims=" %%a in (sync_record.dump) do set /a count+=1
-del sync_record.dump
-if %count% LSS 2 goto :CONNECT_TO_PARENT_SSH_SERVER
-echo Unsynchronized changes in child server available >> %LOGFILE%
-echo ERROR checking clean child server. 
-echo Local, unsynchronized changes are present on this child server.
-echo Make sure to synchronize first.
-echo 1. Synchronize through OpenMRS Child server
-echo 2. Run prepare_child_server again
-echo.
-echo Exiting now
-exit 1
+echo DOWNLOAD_DB: %DOWNLOAD_DB%
+
+IF /I "%DOWNLOAD_DB%"=="true" (
+	rem sanity checks for local uncommitted sync_records =========================
+	%MYSQL_EXE% %LOCAL_DB_CREDENTIALS% %OPENMRS_DB%  -e "select record_id from sync_record where state <> 'COMMITTED' and state <> 'NOT_SUPPOSED_TO_SYNC';" > sync_record.dump
+	set count=0
+	for /f "usebackq delims=" %%a in (sync_record.dump) do set /a count+=1
+	del sync_record.dump
+	if "%count%" LSS "2" goto :CONNECT_TO_PARENT_SSH_SERVER
+	echo Unsynchronized changes in child server available >> %LOGFILE%
+	echo ERROR checking clean child server. 
+	echo Local, unsynchronized changes are present on this child server.
+	echo Make sure to synchronize first.
+	echo 1. Synchronize through OpenMRS Child server
+	echo 2. Run prepare_child_server again
+	echo.
+	echo Exiting now
+	exit 1
+)
 
 echo Connect to the parent server
 :CONNECT_TO_PARENT_SSH_SERVER
@@ -62,12 +67,17 @@ echo Error Connecting to the parent server
 exit 1
 
 :CONNECT_TO_PARENT_MYSQL
-echo Show databases on the remote server
-echo %CONNECT_TO_SERVER% "%REMOTE_DB_CONNECTION% -e 'show databases;' "
-%CONNECT_TO_SERVER% "%REMOTE_DB_CONNECTION% -e 'show databases;' "
-if "%ERRORLEVEL%" == "0" GOTO CLEAR_PARENT_SYNC_RECORDS 
-echo Error Connecting to the parent MYSQL Server 
-exit 1
+if "%DOWNLOAD_DB%"=="true" (
+	echo Show databases on the remote server
+	echo %CONNECT_TO_SERVER% "%REMOTE_DB_CONNECTION% -e 'show databases;' "
+	%CONNECT_TO_SERVER% "%REMOTE_DB_CONNECTION% -e 'show databases;' "
+	if "%ERRORLEVEL%" == "0" GOTO CLEAR_PARENT_SYNC_RECORDS 
+	echo Error Connecting to the parent MYSQL Server 
+	exit 1
+) else (
+    echo Installing OpenMRS without downloading the DB from the parent server 
+	GOTO DOWNLOAD_OPENMRS_MODULES 
+)
 
 :CLEAR_PARENT_SYNC_RECORDS
 rem clear sync records on the parent server======================================
@@ -128,7 +138,7 @@ exit 1
 
 :DOWNLOAD_OPENMRS_MODULES
 rem download openmrs modules from the parent ===========================================================
-echo Step 8/10: Delete sync tables
+echo Step 8/10: Download OpenMRS modules from parent server
 del /F /Q %LOCAL_OPENMRS_MODULES%\*
 %PSCP_EXE% %SSH_CREDENTIALS%:/home/%SSH_USER%/modules/* %LOCAL_OPENMRS_MODULES%
 if "%ERRORLEVEL%" == "0" GOTO DOWNLOAD_OPENMRS_WAR 
@@ -161,29 +171,33 @@ net start Tomcat7
 echo wait 300 seconds for Tomcat to start
 ping -w 1000 -n 300 127.0.0.1 1>NUL
 
-rem delete temp text file in which we store the child server uuid
-del /F /Q %SERVER_UUID_TEXT_FILE%
+if "%DOWNLOAD_DB%"=="true" (
+    rem If we do not download the DB, there is no need to register child with parent server
+	rem delete temp text file in which we store the child server uuid
+	del /F /Q %SERVER_UUID_TEXT_FILE%
 
-:CONFIGURE_CHILD_SETTINGS
-rem configure sync child server ===========================================================
-echo Step 9/10: Configure sync child server
-%MYSQL_EXE% %LOCAL_DB_CREDENTIALS% %OPENMRS_DB% < %UPDATE_CHILD_SERVER_DB_SCRIPT%
-if "%ERRORLEVEL%" == "0" GOTO UPLOAD_CHILD_SERVER_UUID 
-echo Error configuring child server
+	:CONFIGURE_CHILD_SETTINGS
+	rem configure sync child server ===========================================================
+	echo Step 9/10: Configure sync child server
+	%MYSQL_EXE% %LOCAL_DB_CREDENTIALS% %OPENMRS_DB% < %UPDATE_CHILD_SERVER_DB_SCRIPT%
+	if "%ERRORLEVEL%" == "0" GOTO UPLOAD_CHILD_SERVER_UUID 
+	echo Error configuring child server
 
-:UPLOAD_CHILD_SERVER_UUID
-echo Step x/10: Upload child server UUID text file to the parent server
-%PSCP_EXE% -i %SSH_KEY% -P %SSH_PORT% %SERVER_UUID_TEXT_FILE% %SSH_USER%@%PARENT_SERVER%:/tmp/
-if "%ERRORLEVEL%" == "0" GOTO CONFIGURE_PARENT_SETTINGS 
-echo Error uploading child server uuid text file to parent /tmp/ folder
-exit 0
+	:UPLOAD_CHILD_SERVER_UUID
+	echo Step x/10: Upload child server UUID text file to the parent server
+	%PSCP_EXE% -i %SSH_KEY% -P %SSH_PORT% %SERVER_UUID_TEXT_FILE% %SSH_USER%@%PARENT_SERVER%:/tmp/
+	if "%ERRORLEVEL%" == "0" GOTO CONFIGURE_PARENT_SETTINGS 
+	echo Error uploading child server uuid text file to parent /tmp/ folder
+	exit 0
 
-:CONFIGURE_PARENT_SETTINGS
-rem configure sync parent server ===========================================================
-echo Step 10/10: Configure sync parent server
-%CONNECT_TO_SERVER% "%REMOTE_DB_CONNECTION%" < %UPDATE_PARENT_SERVER_DB_SCRIPT%
-if "%ERRORLEVEL%" == "0" GOTO END 
-echo Error registering child server with the parent server
-exit 0
+	:CONFIGURE_PARENT_SETTINGS
+	rem configure sync parent server ===========================================================
+	echo Step 10/10: Configure sync parent server
+	%CONNECT_TO_SERVER% "%REMOTE_DB_CONNECTION%" < %UPDATE_PARENT_SERVER_DB_SCRIPT%
+	if "%ERRORLEVEL%" == "0" GOTO END 
+	echo Error registering child server with the parent server
+	exit 0
+)
 
 :END
+echo Installing OpenMRS finished

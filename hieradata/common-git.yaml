@@ -14,6 +14,7 @@ mysql_root_password: [MYSQL_ROOT_PASSWORD]
 openmrs_db: openmrs
 openmrs_db_user: [OPENMRS_DB_USER]
 openmrs_db_password: [OPENMRS_DB_PASSWORD]
+download_db: true
 ssh_parent_address: 172.16.1.4
 parent_mysql_db_password: [PARENT_MYSQL_PASSWORD]
 ssh_user: [SSH_USER]

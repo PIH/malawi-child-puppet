@@ -30,6 +30,8 @@ class openmrs-sync {
     $refresh_ic3_lnk = "${openmrs_startup_menu}\\Refresh IC3 App.lnk"
 	$ic3_app_artifact= hiera('ic3_app_artifact')
 	$artifacts_url= hiera('artifacts_url')
+	
+	$download_db= hiera('download_db')
   
 	$label_shutdown_openmrs = hiera('label_shutdown_openmrs')
 	$shutdown_openmrs_lnk = "${openmrs_startup_menu}\\Shutdown OpenMRS.lnk"
