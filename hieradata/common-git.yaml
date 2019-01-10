@@ -20,6 +20,7 @@ parent_mysql_db_password: [PARENT_MYSQL_PASSWORD]
 ssh_user: [SSH_USER]
 ssh_port: 22
 artifacts_url: 'http://bamboo.pih-emr.org/artifacts/'
+artifacts_modules_url: 'http://bamboo.pih-emr.org/malawi-repo/modules.zip'
 ic3_app_artifact: openmrs-pwa-apzu-ic3.tar.gz
 label_clean_tomcat: 'Clean Tomcat'
 label_check_for_unsynced_records: 'Check for Unsynced records'
