@@ -39,6 +39,7 @@ set LOCAL_OPENMRS_WAR=<%= @pih_openmrs_war %>
 set LOGFILE=sync.log
 
 echo DOWNLOAD_DB: %DOWNLOAD_DB%
+IF "%DOWNLOAD_DB%"=="" (SET DOWNLOAD_DB=true)
 
 IF /I "%DOWNLOAD_DB%"=="true" (
 	rem sanity checks for local uncommitted sync_records =========================
