@@ -34,6 +34,10 @@ class openmrs-sync {
 	
 	$download_db= hiera('download_db')
 	
+	$refresh_openmrs_app_bat = "${pih_openmrs_db}refreshOpenMRSApp.bat"
+    $label_refresh_openmrs_app = hiera('label_refresh_openmrs_app')
+    $refresh_openmrs_app_lnk = "${openmrs_startup_menu}\\Refresh OpenMRS App.lnk"
+	
 	$download_modules_from_test_server_bat = "${pih_openmrs_home}getOmrsModulesFromTestServer.bat"
 	$label_download_modules_from_test_server = hiera('label_download_modules_from_test')
     $download_modules_from_test_lnk = "${openmrs_startup_menu}\\Download OpenMRS Modules from test server.lnk"
@@ -192,6 +196,18 @@ class openmrs-sync {
 		ensure  => present,
 		provider => windows, 	
 		content	=> template('openmrs-sync/getDbFromParent.bat.erb'),	
+	} ->
+	
+	file { $refresh_openmrs_app_bat: 
+		ensure  => present,
+		provider => windows, 	
+		content	=> template('openmrs-sync/refreshOpenMRSApp.bat.erb'),	
+	} ->
+
+    windows::shortcut { $refresh_openmrs_app_lnk:
+	  target      => $refresh_openmrs_app_bat,
+	  working_directory	=> "${pih_openmrs_db}", 
+	  description => "${label_refresh_openmrs_app}",
 	} ->
 	
 	file { $prepare_child_server_bat: 
