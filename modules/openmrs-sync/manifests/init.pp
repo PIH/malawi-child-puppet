@@ -33,6 +33,10 @@ class openmrs-sync {
 	$artifacts_modules_url= hiera('artifacts_modules_url')
 	
 	$download_db= hiera('download_db')
+	
+	$download_modules_from_test_server_bat = "${pih_openmrs_home}getOmrsModulesFromTestServer.bat"
+	$label_download_modules_from_test_server = hiera('label_download_modules_from_test')
+    $download_modules_from_test_lnk = "${openmrs_startup_menu}\\Download OpenMRS Modules from test server.lnk"
   
 	$label_shutdown_openmrs = hiera('label_shutdown_openmrs')
 	$shutdown_openmrs_lnk = "${openmrs_startup_menu}\\Shutdown OpenMRS.lnk"
@@ -153,6 +157,18 @@ class openmrs-sync {
 	  working_directory	=> "${pih_openmrs_home}", 
 	  description => "${label_start_openmrs}",
 	} ->			
+	
+	file { $download_modules_from_test_server_bat: 
+		ensure  => present,
+		provider => windows, 	
+		content	=> template('openmrs-sync/getOmrsModulesFromTestServer.bat.erb'),	
+	} -> 
+
+	windows::shortcut { $download_modules_from_test_lnk:
+	  target      => $download_modules_from_test_server_bat,
+	  working_directory	=> "${pih_openmrs_home}", 
+	  description => "${label_download_modules_from_test_server}",
+	} ->	
 	
 	windows::shortcut { $reset_openmrs_lnk:
 	  target      => $install_bat,
