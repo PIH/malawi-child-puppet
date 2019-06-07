@@ -14,6 +14,7 @@ $pih_cwrsync_home = "${pih_home}\\cwrsync"
 $pih_gzip_home = "${pih_home}\\gzip"
 $tail_exe = "${pih_home_bin}\\tail.exe"
 $subinacl_exe = "${pih_home_bin}\\subinacl.exe"
+$wget_exe = "${pih_home_bin}\\wget.exe"
 $win_startup_menu = hiera('win_startup_menu')
 $openmrs_startup_menu = "${win_startup_menu}\\OpenMRS" 
 $start_openmrs_lnk = "${openmrs_startup_menu}\\StartOpenMRS.lnk"
