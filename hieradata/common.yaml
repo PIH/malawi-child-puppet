@@ -14,10 +14,14 @@ mysql_root_password: [MYSQL_ROOT_PASSWORD]
 openmrs_db: openmrs
 openmrs_db_user: [OPENMRS_DB_USER]
 openmrs_db_password: [OPENMRS_DB_PASSWORD]
+download_db: true
 ssh_parent_address: 172.16.1.4
 parent_mysql_db_password: [PARENT_MYSQL_PASSWORD]
 ssh_user: [SSH_USER]
 ssh_port: 22
+artifacts_url: 'http://bamboo.pih-emr.org/artifacts/'
+artifacts_modules_url: 'http://bamboo.pih-emr.org/malawi-repo/modules.zip'
+ic3_app_artifact: openmrs-pwa-apzu-ic3.tar.gz
 label_clean_tomcat: 'Clean Tomcat'
 label_check_for_unsynced_records: 'Check for Unsynced records'
 label_prepare_child_server: 'Prepare Child Server'
@@ -26,3 +30,6 @@ label_remove_changelock: 'Remove Changelock'
 label_unsynced_changes: 'Remove Unsynced Changes'
 label_shutdown_openmrs: 'Shutdown OpenMRS'
 label_start_openmrs: 'Start OpenMRS'
+label_refresh_ic3_screening_app: 'Refresh IC3 App'
+label_download_modules_from_test: 'Download OpenMRS modules from test server'
+label_refresh_openmrs_app: 'Refresh OpenMRS App'
