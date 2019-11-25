@@ -48,6 +48,7 @@ class openmrs {
 	$pih_openmrs_war = "${pih_tomcat_home}\\webapps\\openmrs.war"
 	$openmrs_db_zip = "${pih_openmrs_db}openmrs.sql.zip"
 	$pih_openmrs_runtime_properties = "${pih_openmrs_home}openmrs-runtime.properties"
+	$pih_openmrs_json_config = "${pih_openmrs_home}pih-config-haiti-mentalhealth.json"
 			
 	file { $pih_openmrs_home:
 		ensure  => directory,
@@ -123,14 +124,19 @@ class openmrs {
 		content	=> template('openmrs/openmrs-runtime.properties.erb'),	
 	} ->
 
+	windows::environment { 'OPENMRS_RUNTIME_PROPERTIES_FILE': 
+		value	=>	$pih_openmrs_runtime_properties,
+		notify	=> Class['windows::refresh_environment'],
+	} ->
+
 	file { $pih_openmrs_json_config:
 		ensure  => present,
 		provider => windows,
 		content	=> template('openmrs/pih-config-haiti-mentalhealth.json.erb'),
 	} ->
 
-	windows::environment { 'OPENMRS_RUNTIME_PROPERTIES_FILE': 
-		value	=>	$pih_openmrs_runtime_properties,
+	windows::environment { 'OPENMRS_JSON_CONFIG_FILE':
+		value	=>	$pih_config_haiti_mentalhealth,
 		notify	=> Class['windows::refresh_environment'],
 	} ->
 
