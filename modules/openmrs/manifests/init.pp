@@ -121,8 +121,14 @@ class openmrs {
 		ensure  => present,
 		provider => windows, 	
 		content	=> template('openmrs/openmrs-runtime.properties.erb'),	
-	} -> 
-	
+	} ->
+
+	file { $pih_openmrs_json_config:
+		ensure  => present,
+		provider => windows,
+		content	=> template('openmrs/pih-config-haiti-mentalhealth.json.erb'),
+	} ->
+
 	windows::environment { 'OPENMRS_RUNTIME_PROPERTIES_FILE': 
 		value	=>	$pih_openmrs_runtime_properties,
 		notify	=> Class['windows::refresh_environment'],
