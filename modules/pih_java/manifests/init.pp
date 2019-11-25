@@ -2,7 +2,7 @@ class pih_java {
     
 	require pih_folders
 	
-	$jdk_zip = 'jdk_7u80_x64.zip'	
+	$jdk_zip = "${jdk_zip}"
 	$pih_java_zip = "${pih_home_bin}\\${jdk_zip}"
 	
 	file { $pih_java_home:
