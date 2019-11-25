@@ -136,7 +136,7 @@ class openmrs {
 	} ->
 
 	windows::environment { 'OPENMRS_JSON_CONFIG_FILE':
-		value	=>	$pih_config_haiti_mentalhealth,
+		value	=>	$pih_openmrs_json_config,
 		notify	=> Class['windows::refresh_environment'],
 	} ->
 
