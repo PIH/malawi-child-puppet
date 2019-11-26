@@ -2,6 +2,7 @@ if $osfamily == 'windows' {
     File { source_permissions => ignore }
 }
 
+$jdk_zip = "jdk_8u222b10_x64.zip"
 $pih_home = hiera('pih_home')
 $pih_openmrs_home = "${pih_home}\\openmrs\\"
 $windows_openmrs_user = hiera('windows_openmrs_user')
