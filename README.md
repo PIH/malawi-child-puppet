@@ -25,16 +25,16 @@ git clone https://github.com/PIH/malawi-child-puppet.git mental-health
     Copy this common.yaml over to the flash drive, replacing the default one in hieradata/common.yaml
 
 ```
-cd mental-health/hierdata
-scp USER_NAME@amigo.pih-emr.org://home/backups/binaries/mental-health/hieradata/common.yaml .
+cd mental-health/hieradata
+scp USER_NAME@amigo.pih-emr.org:/home/backups/binaries/mental-health/hieradata/common.yaml .
 ```
 
 3) Also from amigo.pih-emr.org download "/home/backups/binaries/mental-health/bin/*" and the configuration files "/home/backups/binaries/mental-health/openmrs-config-zl.zip"  (you can fetch an entire directory structure using sftp using "get -r", or you may want to zip up the entire bin directory first)
     Create a new directory on the flash drive, "/mental-health/bin" and copy over the contents of the directory downloaded in the previous step
 ```  
 cd ..
-scp -r USER_NAME@amigo.pih-emr.org://home/backups/binaries/mental-health/bin .
-scp -r USER_NAME@amigo.pih-emr.org://home/backups/binaries/mental-health/pih-config-haiti-mentalhealth.json /c/mental-health/modules/openmrs/templates/pih-config-haiti-mentalhealth.json.erb
+scp -r USER_NAME@amigo.pih-emr.org:/home/backups/binaries/mental-health/bin .
+scp -r USER_NAME@amigo.pih-emr.org:/home/backups/binaries/mental-health/pih-config-haiti-mentalhealth.json /c/mental-health/modules/openmrs/templates/pih-config-haiti-mentalhealth.json.erb
 ```
 4) Copy the MH "gold" version of OpenMRS core and modules you wish to install into "/mental-health/bin/openmrs" and "/mental-health/bin/openmrs/modules" replacing the existing war and omods
     NOTE: do **not** replace the base sql file (openmrs.sql.zip) found in the /mental-health/bin/openmrs directory (which you downloaded in step #3)
@@ -45,7 +45,7 @@ scp -r USER_NAME@amigo.pih-emr.org://home/backups/binaries/mental-health/pih-con
 cd /c/mental-health/bin/openmrs
 scp USER_NAME@IP:/home/emradmin/mental-health/deployment/openmrs.war .
 mv /c/mental-health/bin/openmrs/modules /c/mental-health/bin/openmrs/modules_old
-scp -r USER_NAME@IP:/home/emradmin/mental-health/deployment/modules/* .
+scp -r USER_NAME@IP:/home/emradmin/mental-health/deployment/modules .
 ```
 Installing from the Flash Drive
 -------------------------------
