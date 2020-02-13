@@ -12,4 +12,5 @@ del /F /Q modules\openmrs\files\modules\*
 xcopy bin\openmrs\openmrs.sql.zip modules\openmrs\files\ /Y /I
 xcopy bin\openmrs\openmrs.war modules\openmrs\files\ /Y /I
 xcopy bin\openmrs\modules\*.omod modules\openmrs\files\modules\ /Y /I
+xcopy bin\openmrs\openmrs-config-zl.zip modules\openmrs\files\ /Y /I
 puppet apply --verbose --logdest=console --hiera_config=./hiera.yaml --modulepath=./modules manifests\site.pp
