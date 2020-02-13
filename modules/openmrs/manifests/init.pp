@@ -48,7 +48,8 @@ class openmrs {
 	$pih_openmrs_war = "${pih_tomcat_home}\\webapps\\openmrs.war"
 	$openmrs_db_zip = "${pih_openmrs_db}openmrs.sql.zip"
 	$pih_openmrs_runtime_properties = "${pih_openmrs_home}openmrs-runtime.properties"
-	$pih_openmrs_json_config = "${pih_openmrs_home}pih-config-haiti-mentalhealth.json"
+	$pih_config_dir = "${pih_home}\\configuration"
+	$openmrs_config_zl_zip = "${pih_home_bin}\\openmrs-config-zl.zip"
 			
 	file { $pih_openmrs_home:
 		ensure  => directory,
@@ -69,7 +70,18 @@ class openmrs {
 		force   => true,
 		recurse => true,
 	} ->
-	
+
+    file { $pih_config_dir:
+    	ensure  => directory,
+    	require => File[$pih_home],
+    } ->
+
+	windows::unzip { $openmrs_config_zl_zip:
+		destination => $pih_config_dir,
+		creates	=> "${pih_config_dir}\\pih",
+		require => File[openmrs_config_zl_zip],
+	} ->
+
 	file { $openmrs_db_zip:
 		ensure  => file,
 		source	=> "puppet:///modules/openmrs/openmrs.sql.zip",		

@@ -7,6 +7,7 @@ $pih_home = hiera('pih_home')
 $pih_openmrs_home = "${pih_home}\\openmrs\\"
 $windows_openmrs_user = hiera('windows_openmrs_user')
 $pih_home_bin = "${pih_home}\\bin"
+$openmrs_config_zl = "${pih_home}\\openmrs\\configuration"
 $pih_java_home = "${pih_home}\\java"
 $pih_tomcat_home = "${pih_home}\\tomcat"
 $pih_mysql_home = "${pih_home}\\mysql"
