@@ -73,6 +73,8 @@ class openmrs {
 
     file { $pih_config_dir:
     	ensure  => directory,
+    	purge   => true,
+        recurse => true,
     	require => File[$pih_home],
     } ->
 	
