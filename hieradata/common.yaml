@@ -33,3 +33,4 @@ label_start_openmrs: 'Start OpenMRS'
 label_refresh_ic3_screening_app: 'Refresh IC3 App'
 label_download_modules_from_test: 'Download OpenMRS modules from test server'
 label_refresh_openmrs_app: 'Refresh OpenMRS App'
+

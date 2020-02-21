@@ -25,24 +25,35 @@ git clone https://github.com/PIH/malawi-child-puppet.git mental-health
     Copy this common.yaml over to the flash drive, replacing the default one in hieradata/common.yaml
 
 ```
-scp USER_NAME@amigo.pih-emr.org://home/backups/binaries/mental-health/hieradata/common.yaml .
+cd mental-health/hieradata
+scp USER_NAME@amigo.pih-emr.org:/home/backups/binaries/mental-health/hieradata/common.yaml .
 ```
 
-3) Also from amigo.pih-emr.org download "/home/backups/binaries/mental-health/bin/*" (you can fetch an entire directory structure using sftp using "get -r", or you may want to zip up the entire bin directory first)
+3) Also from amigo.pih-emr.org download "/home/backups/binaries/mental-health/bin/*" and the configuration files "/home/backups/binaries/mental-health/openmrs-config-zl.zip"  (you can fetch an entire directory structure using sftp using "get -r", or you may want to zip up the entire bin directory first)
     Create a new directory on the flash drive, "/mental-health/bin" and copy over the contents of the directory downloaded in the previous step
+   
 ```  
-scp -r USER_NAME@amigo.pih-emr.org://home/backups/binaries/mental-health/bin .
+cd ..
+scp -r USER_NAME@amigo.pih-emr.org:/home/backups/binaries/mental-health/bin .
 ```
 4) Copy the MH "gold" version of OpenMRS core and modules you wish to install into "/mental-health/bin/openmrs" and "/mental-health/bin/openmrs/modules" replacing the existing war and omods
+    copy the configuration folder from "~/deployment/configuration/pih" to "/mental-health/bin/openmrs"
     NOTE: do **not** replace the base sql file (openmrs.sql.zip) found in the /mental-health/bin/openmrs directory (which you downloaded in step #3)
     You can find these on the Bamboo server at: "/home/emradmin/mental-health/deployment/"
     (if necessary, promote the latest PIH-EMR unstable deploy to Mental Health by running the "promote latest to mental health" bamboo build project)
+     Note: IP should be the url or ip-address for the bamboo server.
 
+```
+cd /c/mental-health/bin/openmrs
+scp USER_NAME@IP:/home/emradmin/mental-health/deployment/openmrs.war .
+scp -r USER_NAME@IP:/home/emradmin/mental-health/deployment/modules .
+scp -r USER_NAME@IP:/home/emradmin/mental-health/deployment/configuration/openmrs-config-zl.zip .
+```
 
 Installing from the Flash Drive
 -------------------------------
 
-Prerequiste--Internet connectiviy will be required, in particular for steps #6 & #7
+Prerequiste--Internet connectivity will be required, in particular for steps #6 & #7
 
 0) Close all applications and reboot the machine
 
