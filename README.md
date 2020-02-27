@@ -84,7 +84,7 @@ Prerequiste--Internet connectivity will be required, in particular for steps #6 
     Close all existing command prompts
     Open a new command prompt (go to start and type cmd and right click on cmd.exe and choose to "Run as Administrator")
     Type cd c:\mental-health\
-    Type: install.bat
+    Type: install.bat (Note: When upgrading an existing laptop, delete all the contents found in C:\openmrs\openmrs\configuration before running install.bat)
     **This command will take several minutes to run**
     If the install.bat outputs any red messages please stop and debug. Do not continue to the next step.
     Wait until the script finishes (it will display a line like "Notice: Finished catalog run in 346.20 seconds")
