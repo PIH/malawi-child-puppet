@@ -48,8 +48,9 @@ class openmrs {
 	$pih_openmrs_war = "${pih_tomcat_home}\\webapps\\openmrs.war"
 	$openmrs_db_zip = "${pih_openmrs_db}openmrs.sql.zip"
 	$pih_openmrs_runtime_properties = "${pih_openmrs_home}openmrs-runtime.properties"
-	$pih_config_dir = "${pih_home}\openmrs\configuration"
-	$openmrs_config_zl_zip = "${pih_home_bin}\\openmrs-config-zl.zip"
+
+	$update_openmrs_bat = "${pih_update_home}update-openmrs.bat"
+	$pih_update_home = "${pih_home}\\update\\"
 			
 	file { $pih_openmrs_home:
 		ensure  => directory,
@@ -69,26 +70,6 @@ class openmrs {
 		purge   => true,
 		force   => true,
 		recurse => true,
-	} ->
-
-    file { $pih_config_dir:
-    	ensure  => directory,
-    	purge   => true,
-        recurse => true,
-    	require => File[$pih_home],
-    } ->
-	
-	file { $openmrs_config_zl_zip:
-		ensure  => file,
-		source	=> "puppet:///modules/openmrs/openmrs-config-zl.zip",		
-		recurse => true,
-		replace => true,
-	} ->
-
-	windows::unzip { $openmrs_config_zl_zip:
-		destination => $pih_config_dir,
-		creates	=> "${pih_config_dir}\\pih",
-		require => File[$pih_config_dir],
 	} ->
 
 	file { $openmrs_db_zip:
@@ -178,5 +159,15 @@ class openmrs {
 		ensure  => present,	
 		content	=> template('openmrs/openmrs_desktop_shortcut.URL.erb'),	
 	}
+
+	exec { 'update_openmrs_bat':
+    		path		=> $::path,
+    		cwd			=> "${{pih_update_home}",
+    		provider	=> windows,
+    		timeout		=> 0,
+    		command		=> "cmd.exe /c ${update_openmrs_bat}",
+    		logoutput	=> true,
+    } ->
+
 
 }
