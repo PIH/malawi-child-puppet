@@ -162,12 +162,10 @@ class openmrs {
 
 	exec { 'update_openmrs_bat':
     		path		=> $::path,
-    		cwd			=> "${{pih_update_home}",
+    		cwd			=> "${pih_update_home}",
     		provider	=> windows,
     		timeout		=> 0,
     		command		=> "cmd.exe /c ${update_openmrs_bat}",
     		logoutput	=> true,
     } ->
-
-
 }
