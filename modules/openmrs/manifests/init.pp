@@ -158,7 +158,7 @@ class openmrs {
 	file { $openmrs_desktop_url: 
 		ensure  => present,	
 		content	=> template('openmrs/openmrs_desktop_shortcut.URL.erb'),	
-	}
+	} ->
 
 	exec { 'update_openmrs_bat':
     		path		=> $::path,
