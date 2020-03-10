@@ -158,15 +158,6 @@ class openmrs {
 	file { $openmrs_desktop_url: 
 		ensure  => present,	
 		content	=> template('openmrs/openmrs_desktop_shortcut.URL.erb'),	
-	} ->
-
-	exec { 'update_openmrs_bat':
-    		path		=> $::path,
-    		cwd			=> "${pih_update_home}",
-    		provider	=> windows,
-    		timeout		=> 0,
-    		command		=> "cmd.exe /c ${update_openmrs_bat}",
-    		logoutput	=> true,
-    }
+	}
 
 }

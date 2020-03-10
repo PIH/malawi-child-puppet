@@ -88,9 +88,11 @@ Prerequiste--Internet connectivity will be required, in particular for steps #6 
     **This command will take several minutes to run**
     If the install.bat outputs any red messages please stop and debug. Do not continue to the next step.
     Wait until the script finishes (it will display a line like "Notice: Finished catalog run in 346.20 seconds")
-
+     
 6) Verify OpenMRS has been installed
-   **After execution of install.bat is complete, wait 10 minutes to allow OpenMRS to start up for the first time**
+   **Note:** This step is important and should always be run after running install.bat. For the configuration files to be copied over,
+      navigate to <drive_name>/openmrs/update then run (click on) update-openmrs bat file. At once point you will be prompted to agree input Y and press enter   
+   **After execution is complete, wait 10 minutes to allow OpenMRS to start up for the first time**
     Click on newly-created desktop shortcut "OpenMRS Sante Mentale"  (the browser will show the page as "connecting" until OpenMRS starts up)
     Make sure you are able to log on the OpenMRS with the "admin" user and **provided password**
 
@@ -140,7 +142,3 @@ TODO: flesh out the details and test on a Windows machine
     Stop OpenMRS (TODO: is there a link for this?)
     Log into mysql client and create the new database "create database openmrs default charset UTF-8"
     From the command line, source the database "mysql -u root -p openmrs < openmrs.sql"
-    
-    
-  
-

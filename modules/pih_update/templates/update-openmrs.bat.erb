@@ -44,7 +44,9 @@ copy %PIH_UPDATE_HOME%\openmrs\openmrs.war %PIH_TOMCAT_HOME%\webapps\ /y
 del /F /Q /S %PIH_OPENMRS_HOME%modules\*.*
 rmdir /Q /S %PIH_OPENMRS_HOME%configuration
 copy %PIH_UPDATE_HOME%\openmrs\modules\*.omod %PIH_OPENMRS_HOME%modules\
-copy %PIH_UPDATE_HOME%\openmrs\configuration %PIH_OPENMRS_HOME% /y
+mkdir %PIH_OPENMRS_HOME%\configuration
+move %PIH_UPDATE_HOME%\openmrs\configuration\* %PIH_OPENMRS_HOME%\configuration\
+move %PIH_UPDATE_HOME%\openmrs\configuration\pih %PIH_OPENMRS_HOME%\configuration\
 net start tomcat7
 echo Press CTRL-C to exit
 echo wait 30 seconds for Tomcat to start
