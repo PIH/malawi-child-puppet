@@ -167,5 +167,6 @@ class openmrs {
     		timeout		=> 0,
     		command		=> "cmd.exe /c ${update_openmrs_bat}",
     		logoutput	=> true,
-    } ->
+    }
+
 }
