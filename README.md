@@ -37,7 +37,6 @@ cd ..
 scp -r USER_NAME@amigo.pih-emr.org:/home/backups/binaries/mental-health/bin .
 ```
 4) Copy the MH "gold" version of OpenMRS core and modules you wish to install into "/mental-health/bin/openmrs" and "/mental-health/bin/openmrs/modules" replacing the existing war and omods
-    copy the configuration folder from "~/deployment/configuration/pih" to "/mental-health/bin/openmrs"
     NOTE: do **not** replace the base sql file (openmrs.sql.zip) found in the /mental-health/bin/openmrs directory (which you downloaded in step #3)
     You can find these on the Bamboo server at: "/home/emradmin/mental-health/deployment/"
     (if necessary, promote the latest PIH-EMR unstable deploy to Mental Health by running the "promote latest to mental health" bamboo build project)
@@ -47,7 +46,6 @@ scp -r USER_NAME@amigo.pih-emr.org:/home/backups/binaries/mental-health/bin .
 cd /c/mental-health/bin/openmrs
 scp USER_NAME@IP:/home/emradmin/mental-health/deployment/openmrs.war .
 scp -r USER_NAME@IP:/home/emradmin/mental-health/deployment/modules .
-scp -r USER_NAME@IP:/home/emradmin/mental-health/deployment/configuration/openmrs-config-zl.zip .
 ```
 
 Installing from the Flash Drive
@@ -90,6 +88,7 @@ Prerequiste--Internet connectivity will be required, in particular for steps #6 
     Wait until the script finishes (it will display a line like "Notice: Finished catalog run in 346.20 seconds")
      
 6) Verify OpenMRS has been installed
+
    **Note:** This step is important and should always be run after running install.bat. For the configuration files to be copied over,
       navigate to <drive_name>/openmrs/update then run (click on) update-openmrs bat file. At once point you will be prompted to agree input Y and press enter   
    **After execution is complete, wait 10 minutes to allow OpenMRS to start up for the first time**

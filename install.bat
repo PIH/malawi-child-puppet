@@ -9,9 +9,7 @@ xcopy bin\backups\7za.exe modules\pih_backups\files\ /Y /I
 del /F /Q modules\openmrs\files\openmrs.sql.zip
 del /F /Q modules\openmrs\files\openmrs.war 
 del /F /Q modules\openmrs\files\modules\*
-del /F /Q modules\openmrs\files\openmrs-config-zl.zip
 xcopy bin\openmrs\openmrs.sql.zip modules\openmrs\files\ /Y /I
 xcopy bin\openmrs\openmrs.war modules\openmrs\files\ /Y /I
 xcopy bin\openmrs\modules\*.omod modules\openmrs\files\modules\ /Y /I
-xcopy bin\openmrs\openmrs-config-zl.zip modules\openmrs\files\ /Y /I
 puppet apply --verbose --logdest=console --hiera_config=./hiera.yaml --modulepath=./modules manifests\site.pp
