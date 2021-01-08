@@ -1,0 +1,46 @@
+#!/bin/bash
+
+# parameters
+exportPath=/tmp/export/
+fnTables=$exportPath/createTables.sql
+datapath=/var/lib/mysql/<%= @openmrs_db %>
+dbname=<%= @openmrs_db %>
+user=<%= @mysql_root_user %>
+passwd=<%= @parent_mysql_db_password %>
+
+# ensure clean export directory exists
+if [ -d $exportPath ]
+then
+    rm $exportPath/*.ibd
+    rm $exportPath/*.sql
+else
+    mkdir $exportPath
+fi
+
+# get mysql tables
+tables=($(find $datapath/ -name '*ibd' -exec basename {} \; | cut -f 1 -d '.'))
+
+# drop old table export if it exists
+if test -f "$fnTables"; then
+    echo "Dropping old table export..."
+    rm $fnTables
+fi
+
+# remove foreign key constraint in table export script
+touch $fnTables
+echo "set foreign_key_checks = 0;" >> $fnTables
+
+# loop over tables to generate CREATE TABLE commands
+for table in "${tables[@]}"
+do
+#   echo $table
+   mysqldump --no-data --user=$user --password=$passwd $dbname $table >> $fnTables
+   query="\"FLUSH TABLE $table FOR EXPORT;\""
+   eval mysql -u $user -p$passwd $dbname -e $query
+   cp $datapath/$table.ibd $exportPath
+   mysql -u $user -p$passwd $dbname -e "UNLOCK TABLES;"
+done
+
+echo "set foreign_key_checks = 1;" >> $fnTables
+
+exit 0

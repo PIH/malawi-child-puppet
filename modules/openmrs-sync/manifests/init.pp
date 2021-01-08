@@ -11,12 +11,14 @@ class openmrs-sync {
 	$pih_openmrs_modules = "${pih_openmrs_home}\\modules\\"
 	$pih_openmrs_db = "${pih_openmrs_home}db\\"
 	$pih_openmrs_db_file = "${pih_openmrs_db}openmrs.sql"
+	$pih_mysql_data = "${pih_mysql_home}\\data\\"
 	$pih_openmrs_db_bat = "${pih_openmrs_db}dropAndCreateDb.sql"
 	$pih_openmrs_db_file_linux = regsubst($pih_openmrs_db_file, '[\\]', '/', G) 
 	
 	$openmrs_create_db_sql = "${pih_openmrs_db}dropAndCreateDb.sql"
 	$delete_sync_tables_sql = "${pih_openmrs_db}deleteSyncTables.sql"
 	$get_db_from_parent_bat = "${pih_openmrs_db}getDbFromParent.bat"
+	$get_db_from_parent_bash = "${pih_openmrs_db}export.sh"
 	$check_For_Unsynced_Records_bat = "${pih_openmrs_db}checkForUnsyncedRecords.bat"
 	$remove_changeloglock_bat = "${pih_openmrs_db}remove_changeloglock.bat"
 	$remove_unsynced_changes_bat = "${pih_openmrs_db}remove_unsynced_changes.bat"
@@ -192,10 +194,16 @@ class openmrs-sync {
 		content	=> template('openmrs-sync/updateParentServerSettings.sql.erb'),		
 	} ->
 	
-	file { $get_db_from_parent_bat: 
+	file { $get_db_from_parent_bat:
+		ensure  => present,
+		provider => windows,
+		content	=> template('openmrs-sync/getDbFromParent.bat.erb'),
+	} ->
+
+	file { $get_db_from_parent_bash:
 		ensure  => present,
 		provider => windows, 	
-		content	=> template('openmrs-sync/getDbFromParent.bat.erb'),	
+		content	=> template('openmrs-sync/export.sh.erb'),
 	} ->
 	
 	file { $refresh_openmrs_app_bat: 
