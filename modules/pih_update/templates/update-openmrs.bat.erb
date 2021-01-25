@@ -40,13 +40,13 @@ echo Update OpenMRS webapp
 cd %PIH_TOMCAT_HOME%\bin
 cmd.exe /c cleanTomcat.bat
 cd\
+del /F /Q /S %PIH_TOMCAT_HOME%\webapps\openmrs.war
+rmdir /S /Q %PIH_TOMCAT_HOME%\webapps\openmrs
 copy %PIH_UPDATE_HOME%\openmrs\openmrs.war %PIH_TOMCAT_HOME%\webapps\ /y
 del /F /Q /S %PIH_OPENMRS_HOME%modules\*.*
-rmdir /Q /S %PIH_OPENMRS_HOME%configuration
+rmdir /S /Q %PIH_OPENMRS_HOME%configuration
 copy %PIH_UPDATE_HOME%\openmrs\modules\*.omod %PIH_OPENMRS_HOME%modules\
-mkdir %PIH_OPENMRS_HOME%\configuration
-move %PIH_UPDATE_HOME%\openmrs\configuration\* %PIH_OPENMRS_HOME%\configuration\
-move %PIH_UPDATE_HOME%\openmrs\configuration\pih %PIH_OPENMRS_HOME%\configuration\
+move %PIH_UPDATE_HOME%\openmrs\configuration %PIH_OPENMRS_HOME%
 net start tomcat7
 echo Press CTRL-C to exit
 echo wait 30 seconds for Tomcat to start
