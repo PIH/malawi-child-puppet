@@ -94,6 +94,12 @@ Prerequiste--Internet connectivity will be required, in particular for steps #6 
    **After execution is complete, wait 10 minutes to allow OpenMRS to start up for the first time**
     Click on newly-created desktop shortcut "OpenMRS Sante Mentale"  (the browser will show the page as "connecting" until OpenMRS starts up)
     Make sure you are able to log on the OpenMRS with the "admin" user and **provided password**
+   
+   **Note:** If installing for the first time, if OpenMRS starts up and is asking for an administrator password to continue with setup, and you
+   are unable to login, then Stop OpenMRS, modify the file at c:\openmrs\openmrs\openmrs-runtime.properties and set auto_update_database=true,
+   and then Start OpenMRS.
+   
+   **Note:** If you are unsure how to log in as the admin user, check the openmrs-runtime.properties file for the scheduler username and password.
 
 7) Confirm local identifier pool has picked up identifiers from the remote identifier source
     (The refill task only runs every 5 minutes, so it may not immediately have identifiers, but **after 5 minutes with Internet connectivity** it should).
