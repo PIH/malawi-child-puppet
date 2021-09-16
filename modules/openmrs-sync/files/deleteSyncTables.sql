@@ -12,12 +12,3 @@ truncate sync_class;
 truncate sync_transmission_log;
 truncate sync_server;
 SET FOREIGN_KEY_CHECKS=1;
-
-drop table sync_transmission_log_record;
-drop table sync_server_record;
-drop table sync_record;
-drop table sync_server_class;
-drop table sync_import;
-drop table sync_class;
-drop table sync_transmission_log;
-drop table sync_server;
