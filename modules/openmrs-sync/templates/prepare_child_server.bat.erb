@@ -127,7 +127,7 @@ exit 1
 :DELETE_LOCAL_SYNC_TABLES
 rem delete sync tables ===========================================================
 echo Step 7/10: Import/Source parent database
-%MYSQL_EXE% %LOCAL_DB_CREDENTIALS% %OPENMRS_DB% < %DELETE_SYNC_TABLES_DB_SCRIPT% 
+%MYSQL_EXE% --force %LOCAL_DB_CREDENTIALS% %OPENMRS_DB% < %DELETE_SYNC_TABLES_DB_SCRIPT% 
 if "%ERRORLEVEL%" == "0" GOTO DOWNLOAD_OPENMRS_WAR
 echo Error importing local db 
 pause
