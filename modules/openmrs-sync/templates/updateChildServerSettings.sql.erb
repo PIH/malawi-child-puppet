@@ -2,6 +2,14 @@ update global_property set property_value='<%= @child_name %>' where property='s
 update global_property set property_value='<%= @sync_admin_email %>' where property='sync.admin_email';
 update global_property set property_value='500' where property='sync.max_records.web';
 
+INSERT INTO global_property (property, property_value, description, uuid)
+SELECT 'sync.server_uuid', uuid(),
+				'Universally unique server id used to identify a given data source in synchronization.',
+				uuid() 
+from   global_property   
+where not exists (select property_value from global_property where property = 'sync.server_uuid') 
+limit 1;
+
 select property_value into outfile '<%= @output_server_uuid %>' from global_property where property='sync.server_uuid';
 select property_value from global_property where property='sync.server_uuid' into @child_server_uuid;
 select @child_server_uuid;
