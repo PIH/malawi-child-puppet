@@ -75,7 +75,7 @@ class pih_tomcat {
 		path		=> $::path,
 		cwd			=> "${pih_tomcat_home}\\bin", 
 		provider	=> windows, 
-		command		=> "cmd.exe /c set JAVA_HOME=${pih_java_home}&&tomcat7 //US//Tomcat7 --JvmMx 3096 ++JvmOptions=\"-XX:MaxPermSize=1024m\"",
+		command		=> "cmd.exe /c set JAVA_HOME=${pih_java_home}&&tomcat7 //US//Tomcat7 --JvmMx 3096 ++JvmOptions=\"-XX:MaxPermSize=1024m;-Djsse.enableSNIExtension=false\"",
 		logoutput	=> true,
 	} ->
 	
