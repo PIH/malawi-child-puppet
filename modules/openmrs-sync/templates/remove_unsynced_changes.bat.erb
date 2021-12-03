@@ -14,5 +14,6 @@ set LOCAL_OPENMRS_DB_PASSWORD=<%= @mysql_root_password %>
 set OPENMRS_DB=<%= @openmrs_db %>
 set LOCAL_DB_CREDENTIALS=-u %LOCAL_OPENMRS_DB_USER% -p%LOCAL_OPENMRS_DB_PASSWORD%
 
+%MYSQL_EXE% %LOCAL_DB_CREDENTIALS% %OPENMRS_DB% -e "delete from sync_server_record;"
 %MYSQL_EXE% %LOCAL_DB_CREDENTIALS% %OPENMRS_DB% -e "delete from sync_record;"
 pause

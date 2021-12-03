@@ -27,6 +27,7 @@ set OPENMRS_DB=<%= @openmrs_db %>
 set REMOTE_DB_CREDENTIALS=-u %REMOTE_OPENMRS_DB_USER% -p%REMOTE_OPENMRS_DB_PASSWORD% %OPENMRS_DB%
 set LOCAL_DB_CREDENTIALS=-u %LOCAL_OPENMRS_DB_USER% -p%LOCAL_OPENMRS_DB_PASSWORD%
 set REMOTE_DB_CONNECTION=mysql %REMOTE_DB_CREDENTIALS%
+set PIH_OPENMRS_DB=<%= @pih_openmrs_db %>
 set DROP_AND_CREATE_DB_SCRIPT=<%= @openmrs_create_db_sql %>
 set DELETE_SYNC_TABLES_DB_SCRIPT=<%= @delete_sync_tables_sql %>
 set UPDATE_CHILD_SERVER_DB_SCRIPT=<%= @update_child_server_settings_sql %>
@@ -35,6 +36,10 @@ set SERVER_UUID_TEXT_FILE=<%= @server_uuid_text_file %>
 set LOCAL_OPENMRS_MODULES=<%= @pih_openmrs_modules %>
 set LOCAL_OPENMRS_WAR=<%= @pih_openmrs_war %>
 set LOGFILE=sync.log
+
+echo %pih_openmrs_home%
+cd %pih_openmrs_home%
+dir
 
 rem sanity checks for local uncommitted sync_records =========================
 %MYSQL_EXE% %LOCAL_DB_CREDENTIALS% %OPENMRS_DB%  -e "select record_id from sync_record where state <> 'COMMITTED' and state <> 'NOT_SUPPOSED_TO_SYNC';" > sync_record.dump
@@ -72,7 +77,7 @@ exit 1
 
 :CLEAR_PARENT_SYNC_RECORDS
 rem clear sync records on the parent server======================================
-echo Step 1/10: Clear sync records on parent server
+echo Step 1: Clear sync records on parent server
 rem delete from sync_server_record; delete from sync_record; delete from sync_import;
 %CONNECT_TO_SERVER% "%REMOTE_DB_CONNECTION% -e 'delete from sync_server_record; delete from sync_record; delete from sync_import;' "
 if "%ERRORLEVEL%" == "0" GOTO DUMP_PARENT_DB 
@@ -80,7 +85,7 @@ echo Error Deleting sync records on parent server
 
 rem dump parent DB ===========================================================
 :DUMP_PARENT_DB
-echo Step 2/10: Dump parent db on parent server
+echo Step 2: Dump parent db on parent server
 %CONNECT_TO_SERVER% "mysqldump %REMOTE_DB_CREDENTIALS% -q -e --single-transaction | gzip > /tmp/parent-dump.sql.gz "
 if "%ERRORLEVEL%" == "0" GOTO DOWNLOAD_DB_FROM_PARENT 
 echo Error dumping parent db
@@ -89,26 +94,28 @@ exit 1
 
 :DOWNLOAD_DB_FROM_PARENT
 rem Copy db from parent server ===========================================================
-echo Step 3/10: Copy db from parent server
+echo Step 3: Copy db from parent server
 %PSCP_EXE% %SSH_CREDENTIALS%:/tmp/parent-dump.sql.gz .
 if "%ERRORLEVEL%" == "0" GOTO UNZIP_PARENT_DB 
 echo Error downloading parent db
+dir
 pause
 exit 1
 
 :UNZIP_PARENT_DB
 rem unzip parent DB ===========================================================
-echo Step 4/10: Unzip parent DB
+echo Step 4: Unzip parent DB
 %GZIP_EXE% -f -d parent-dump.sql.gz
 if "%ERRORLEVEL%" == "0" GOTO RECREATE_LOCAL_DB 
 echo Error unzipping parent db
+dir
 pause
 exit 1
 
 :RECREATE_LOCAL_DB
 net stop Tomcat7
 rem drop and recreate local DB ===========================================================
-echo Step 5/10: Drop and re-create local DB
+echo Step 5: Drop and re-create local DB
 %MYSQL_EXE% %LOCAL_DB_CREDENTIALS% < %DROP_AND_CREATE_DB_SCRIPT%
 if "%ERRORLEVEL%" == "0" GOTO SOURCE_LOCAL_DB 
 echo Error dropping and recreating local db
@@ -117,16 +124,17 @@ exit 1
 
 :SOURCE_LOCAL_DB
 rem import parent db into the local server ===========================================================
-echo Step 6/10: Import parent DB
+echo Step 6: Import parent DB
 %MYSQL_EXE% %LOCAL_DB_CREDENTIALS% %OPENMRS_DB% < parent-dump.sql
 if "%ERRORLEVEL%" == "0" GOTO DELETE_LOCAL_SYNC_TABLES 
-echo Error importing local db 
+echo Error importing local db
+dir
 pause
 exit 1
 
 :DELETE_LOCAL_SYNC_TABLES
 rem delete sync tables ===========================================================
-echo Step 7/10: Import/Source parent database
+echo Step 7: DELETE_LOCAL_SYNC_TABLES
 %MYSQL_EXE% --force %LOCAL_DB_CREDENTIALS% %OPENMRS_DB% < %DELETE_SYNC_TABLES_DB_SCRIPT% 
 if "%ERRORLEVEL%" == "0" GOTO DOWNLOAD_OPENMRS_WAR
 echo Error importing local db 
@@ -135,22 +143,24 @@ exit 1
 
 :DOWNLOAD_OPENMRS_WAR
 rem download openmrs war from the parent ===========================================================
-echo Step x/10: Download openmrs.war from parent
+echo Step 8: Download openmrs.war from parent
+echo %PSCP_EXE% %SSH_CREDENTIALS%:/home/%SSH_USER%/webapps/openmrs.war %LOCAL_OPENMRS_WAR%
 %PSCP_EXE% %SSH_CREDENTIALS%:/home/%SSH_USER%/webapps/openmrs.war %LOCAL_OPENMRS_WAR%
 if "%ERRORLEVEL%" == "0" GOTO DOWNLOAD_OPENMRS_MODULES
 echo Failed to download  openmrs war from parent
 
 :DOWNLOAD_OPENMRS_MODULES
 rem download openmrs modules from the parent ===========================================================
-echo Step x/10: Delete openmrs modules from parent
+echo Step 9: Delete openmrs modules from parent: %LOCAL_OPENMRS_MODULES%
 del /F /Q %LOCAL_OPENMRS_MODULES%\*
+echo %PSCP_EXE% %SSH_CREDENTIALS%:/home/%SSH_USER%/modules/* %LOCAL_OPENMRS_MODULES%
 %PSCP_EXE% %SSH_CREDENTIALS%:/home/%SSH_USER%/modules/* %LOCAL_OPENMRS_MODULES%
 if "%ERRORLEVEL%" == "0" GOTO START_TOMCAT 
 echo Failed to download  openmrs modules from parent
 
 :START_TOMCAT
 rem start Tomcat openmrs web app
-echo Step 8/10: Start Tomcat openmrs web app
+echo Step 10: Start Tomcat openmrs web app
 net start Tomcat7
 
 rem wait 300 seconds for Tomcat to start
@@ -161,13 +171,13 @@ del /F /Q %SERVER_UUID_TEXT_FILE%
 
 :CONFIGURE_CHILD_SETTINGS
 rem configure sync child server ===========================================================
-echo Step 9/10: Configure sync child server
+echo Step 11: Configure sync child server
 %MYSQL_EXE% %LOCAL_DB_CREDENTIALS% %OPENMRS_DB% < %UPDATE_CHILD_SERVER_DB_SCRIPT%
 if "%ERRORLEVEL%" == "0" GOTO UPLOAD_CHILD_SERVER_UUID 
 echo Error configuring child server
 
 :UPLOAD_CHILD_SERVER_UUID
-echo Step x/10: Upload child server UUID text file to the parent server
+echo Step 12: Upload child server UUID text file to the parent server
 %PSCP_EXE% -i %SSH_KEY% -P %SSH_PORT% %SERVER_UUID_TEXT_FILE% %SSH_USER%@%PARENT_SERVER%:/tmp/
 if "%ERRORLEVEL%" == "0" GOTO CONFIGURE_PARENT_SETTINGS 
 echo Error uploading child server uuid text file to parent /tmp/ folder
@@ -176,7 +186,7 @@ exit 0
 
 :CONFIGURE_PARENT_SETTINGS
 rem configure sync parent server ===========================================================
-echo Step 10/10: Configure sync parent server
+echo Step 13: Configure sync parent server
 %CONNECT_TO_SERVER% "%REMOTE_DB_CONNECTION%" < %UPDATE_PARENT_SERVER_DB_SCRIPT%
 if "%ERRORLEVEL%" == "0" GOTO END 
 echo Error registering child server with the parent server
