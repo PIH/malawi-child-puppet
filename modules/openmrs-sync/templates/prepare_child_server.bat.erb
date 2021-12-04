@@ -37,8 +37,8 @@ set LOCAL_OPENMRS_MODULES=<%= @pih_openmrs_modules %>
 set LOCAL_OPENMRS_WAR=<%= @pih_openmrs_war %>
 set LOGFILE=sync.log
 
-echo %pih_openmrs_home%
-cd %pih_openmrs_home%
+echo %PIH_OPENMRS_DB%
+cd %PIH_OPENMRS_DB%
 dir
 
 rem sanity checks for local uncommitted sync_records =========================
