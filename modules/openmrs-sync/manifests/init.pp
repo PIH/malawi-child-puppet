@@ -16,6 +16,7 @@ class openmrs-sync {
 	
 	$openmrs_create_db_sql = "${pih_openmrs_db}dropAndCreateDb.sql"
 	$delete_sync_tables_sql = "${pih_openmrs_db}deleteSyncTables.sql"
+	$reset_search_index_sql = "${pih_openmrs_db}resetSearchIndex.sql"
 	$get_db_from_parent_bat = "${pih_openmrs_db}getDbFromParent.bat"
 	$check_For_Unsynced_Records_bat = "${pih_openmrs_db}checkForUnsyncedRecords.bat"
 	$remove_changeloglock_bat = "${pih_openmrs_db}remove_changeloglock.bat"
@@ -124,7 +125,13 @@ class openmrs-sync {
 		ensure  => present,
 		provider => windows, 	
 		source	=> "puppet:///modules/openmrs-sync/deleteSyncTables.sql",
-	} -> 
+	} ->
+
+	file { $reset_search_index_sql:
+		ensure  => present,
+		provider => windows,
+		source	=> "puppet:///modules/openmrs-sync/resetSearchIndex.sql",
+	} ->
 
 	file { $stop_OpenMRS_bat: 
 		ensure  => present,

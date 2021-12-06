@@ -30,6 +30,7 @@ set LOCAL_DB_CREDENTIALS=-u %LOCAL_OPENMRS_DB_USER% -p%LOCAL_OPENMRS_DB_PASSWORD
 set REMOTE_DB_CONNECTION=mysql %REMOTE_DB_CREDENTIALS%
 set DROP_AND_CREATE_DB_SCRIPT=<%= @openmrs_create_db_sql %>
 set DELETE_SYNC_TABLES_DB_SCRIPT=<%= @delete_sync_tables_sql %>
+set RESET_SEARCH_INDEX_DB_SCRIPT=<%= @reset_search_index_sql %>
 set UPDATE_CHILD_SERVER_DB_SCRIPT=<%= @update_child_server_settings_sql %>
 set UPDATE_PARENT_SERVER_DB_SCRIPT=<%= @update_parent_server_settings_sql %>
 set SERVER_UUID_TEXT_FILE=<%= @server_uuid_text_file %>
@@ -133,13 +134,21 @@ exit 1
 rem delete sync tables ===========================================================
 echo Step 7/10: Delete sync tables
 %MYSQL_EXE% --force %LOCAL_DB_CREDENTIALS% %OPENMRS_DB% < %DELETE_SYNC_TABLES_DB_SCRIPT% 
-if "%ERRORLEVEL%" == "0" GOTO DOWNLOAD_OPENMRS_MODULES 
+if "%ERRORLEVEL%" == "0" GOTO RESET_SEARCH_INDEX
 echo Error importing local db
 exit 1
 
+:RESET_SEARCH_INDEX
+rem reset_search_index ===========================================================
+echo Step 8: RESET_SEARCH_INDEX
+%MYSQL_EXE% --force %LOCAL_DB_CREDENTIALS% %OPENMRS_DB% < %RESET_SEARCH_INDEX_DB_SCRIPT%
+if "%ERRORLEVEL%" == "0" GOTO DOWNLOAD_OPENMRS_MODULES
+echo Error reseting OpenMRS search index
+pause
+
 :DOWNLOAD_OPENMRS_MODULES
 rem download openmrs modules from the parent ===========================================================
-echo Step 8/10: Download OpenMRS modules from parent server
+echo Step 9: Download OpenMRS modules from parent server
 del /F /Q %LOCAL_OPENMRS_MODULES%\*
 %PSCP_EXE% %SSH_CREDENTIALS%:/home/%SSH_USER%/modules/* %LOCAL_OPENMRS_MODULES%
 if "%ERRORLEVEL%" == "0" GOTO DOWNLOAD_OPENMRS_WAR 
@@ -147,7 +156,7 @@ echo Failed to download  openmrs modules from parent
 
 :DOWNLOAD_OPENMRS_WAR
 rem download openmrs war from the parent ===========================================================
-echo Step 9/10: Download openmrs war from the parent
+echo Step 10: Download openmrs war from the parent
 echo First, attempt to delete existing war file:
 del /F /Q %LOCAL_OPENMRS_WAR%
 %PSCP_EXE% %SSH_CREDENTIALS%:/home/%SSH_USER%/webapps/openmrs.war %LOCAL_OPENMRS_WAR%
@@ -156,7 +165,7 @@ echo Failed to download  openmrs war from parent
 
 :DOWNLOAD_WORKFLOW_APP
 rem download workflow app from the parent ===========================================================
-echo Step 10: Download openmrs war from the parent
+echo Step 11: Download openmrs war from the parent
 echo First, attempt to delete existing workflow app:
 rmdir /S /Q %LOCAL_OPENMRS_WORKFLOW%
 mkdir %LOCAL_OPENMRS_WORKFLOW%
@@ -166,7 +175,7 @@ echo Failed to download  workflow from parent
 
 :START_TOMCAT
 rem start Tomcat openmrs web app
-echo Step 11: Start Tomcat openmrs web app
+echo Step 12: Start Tomcat openmrs web app
 net start Tomcat7
 
 echo wait 300 seconds for Tomcat to start
@@ -179,13 +188,13 @@ if "%DOWNLOAD_DB%"=="true" (
 
 	:CONFIGURE_CHILD_SETTINGS
 	rem configure sync child server ===========================================================
-	echo Step 9/10: Configure sync child server
+	echo Step 13: Configure sync child server
 	%MYSQL_EXE% %LOCAL_DB_CREDENTIALS% %OPENMRS_DB% < %UPDATE_CHILD_SERVER_DB_SCRIPT%
 	if "%ERRORLEVEL%" == "0" GOTO UPLOAD_CHILD_SERVER_UUID 
 	echo Error configuring child server
 
 	:UPLOAD_CHILD_SERVER_UUID
-	echo Step x/10: Upload child server UUID text file to the parent server
+	echo Step 14: Upload child server UUID text file to the parent server
 	%PSCP_EXE% -i %SSH_KEY% -P %SSH_PORT% %SERVER_UUID_TEXT_FILE% %SSH_USER%@%PARENT_SERVER%:/tmp/
 	if "%ERRORLEVEL%" == "0" GOTO CONFIGURE_PARENT_SETTINGS 
 	echo Error uploading child server uuid text file to parent /tmp/ folder
@@ -193,7 +202,7 @@ if "%DOWNLOAD_DB%"=="true" (
 
 	:CONFIGURE_PARENT_SETTINGS
 	rem configure sync parent server ===========================================================
-	echo Step 10/10: Configure sync parent server
+	echo Step 15: Configure sync parent server
 	%CONNECT_TO_SERVER% "%REMOTE_DB_CONNECTION%" < %UPDATE_PARENT_SERVER_DB_SCRIPT%
 	if "%ERRORLEVEL%" == "0" GOTO END 
 	echo Error registering child server with the parent server
