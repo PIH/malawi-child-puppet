@@ -225,7 +225,7 @@ wget -O openmrs-config-zl.zip "https://oss.sonatype.org/service/local/artifact/m
 unzip openmrs-config-zl.zip
 ```
 
-4) Make sure zip file is also staged in the directory `/home/emradmin/mental-health` directory
+4) Make sure zip file is also staged in the directory `/home/emradmin/mental-health` 
    (I believe it's staged here so that it can be updated by clients without having to update the code)
 ```
 rm -rf ../../openmrs-config-zl.zip
