@@ -147,3 +147,88 @@ TODO: flesh out the details and test on a Windows machine
     Stop OpenMRS (TODO: is there a link for this?)
     Log into mysql client and create the new database "create database openmrs default charset UTF-8"
     From the command line, source the database "mysql -u root -p openmrs < openmrs.sql"
+
+Staging a new PIH-EMR Mental Health Instance for Release
+===========================================================================
+
+Currently, the latest "gold" code and config releases for Mental Health are hosted on our old Bamboo server
+(bamboo.pih-emr.org)
+
+Ideally, we will be moving away from this server, but we need to use it in the short-term because  the
+scripts on the mental health laptops are currently configured to look to Bamboo for updates.
+
+Previously, we had Bamboo jobs to install the latest code and config for Mental Health into the appropriate directories.
+(For reference, I'm posted the scripts those jobs executed here: https://pihemr.atlassian.net/browse/UHM-6617)
+
+However, as we are "sunsetting" the old Bamboo service, for now we will manually install the files on the old Bamboo
+server when needed.
+
+I've written the following instructions based on our previous scripts and partially tested, but not
+fully tested, as I didn't want to touch the existing setup on Bamboo.  The first time we try the following we
+should use care.
+
+Staging the contents of the OpenMRS Debian package (ie, the code)
+-----------------------------------------------------------------
+
+1) On Bamboo, Clean out the existing war, omod and temp directory set up on Bamboo:
+
+```
+rm /home/emradmin/mental-health/deployment/openmrs.war
+rm /home/emradmin/mental-health/deployment/modules/*
+rm -r /home/emradmin/mental-health/deployment/tmp/*
+```
+
+2) Find the version of the PIH EMR debian package you wish to deploy here: https://openmrs.jfrog.io/ui/native/deb-pih/pool/
+
+3) Download this debian package to Bamboo and place it in the  temp directory `/home/emradmin/mental-health/deployment/tmp`
+   (todo: I tried to fetch via wget but it wasn't working correctly, not sure if I had some sort of typo)
+
+5) Extract the debian package and copy the war and modules into the appropriate directories
+
+```
+dpkg-deb -x *.deb .
+
+mv home/tomcat7/.OpenMRS/modules/* /home/emradmin/mental-health/deployment/modules
+mv var/lib/tomcat7/webapps/openmrs.war /home/emradmin/mental-health/deployment
+```
+
+5) Clean out the temp directory
+
+```
+rm -r /home/emradmin/mental-health/deployment/tmp/*
+```
+
+NOTE: looks like we are *not* currently staging the OWAs or the new O3 frontend code for deployment to the MH laptops.
+If we ever want to use this functionality on the MH laptops, we will need to make sure we start deploying this.
+
+
+Staging the contents of the ZL config
+-----------------------------------------------------------------
+
+1) Clean out the existing "configuration" directory in the staging directory on Bamboo:
+
+```
+rm -rf /home/emradmin/mental-health/deployment/configuration/*
+```
+
+2) Go to that directory and use wget to fetch the version of the config-zl you want to use from Sonatype
+
+```
+cd /home/emradmin/mental-health/deployment/configuration
+# replace "1.13.0" with the version you want to download
+wget -O openmrs-config-zl.zip "https://oss.sonatype.org/service/local/artifact/maven/content?g=org.pih.openmrs&a=openmrs-config-zl&r=releases&p=zip&v=1.13.0"
+```
+
+3) Unzip the archive
+
+```
+unzip openmrs-config-zl.zip
+```
+
+4) Make sure zip file is also staged in the directory `/home/emradmin/mental-health` directory
+   (I believe it's staged here so that it can be updated by clients without having to update the code)
+```
+rm -rf ../../openmrs-config-zl.zip
+mv openmrs-config-zl.zip ../../
+```
+
