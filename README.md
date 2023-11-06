@@ -215,8 +215,8 @@ rm -rf /home/emradmin/mental-health/deployment/configuration/*
 
 ```
 cd /home/emradmin/mental-health/deployment/configuration
-# replace "1.13.0" with the version you want to download
-wget -O openmrs-config-zl.zip "https://oss.sonatype.org/service/local/artifact/maven/content?g=org.pih.openmrs&a=openmrs-config-zl&r=releases&p=zip&v=1.13.0"
+# replace "1.45.0" with the version you want to download
+wget -O openmrs-config-zl.zip "https://s01.oss.sonatype.org/service/local/repositories/releases/content/org/pih/openmrs/openmrs-config-zl/1.45.0/openmrs-config-zl-1.45.0.zip"
 ```
 
 3) Unzip the archive
