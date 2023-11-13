@@ -9,6 +9,7 @@ rem stop openmrs =============================================================
 echo Stopping OpenMRS localhost
 set PWD=%CD%
 net stop Tomcat7
+taskkill /F /im tomcat7.exe
 cd /d %PWD%
 
 : fake messages to clear screen
